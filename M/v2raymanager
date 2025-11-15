@@ -106,42 +106,79 @@ msg17='\033[1;37m\033[1;33m(Sem imformação - Para Cancelar Digite CRTL + C)\03
     addusr () {
     clear
     echo -e "\E[44;1;37m            ADICIONAR USUARIO | UUID V2RAY             \E[0m"
+
     ##DIAS
     valid=$(date '+%C%y-%m-%d' -d " +31 days")		  
+
     ##CORREO		  
     MAILITO=$(cat /dev/urandom | tr -dc '[:alnum:]' | head -c 10)
-    ##ADDUSERV2RAY		  
-    UUID=`uuidgen`	  
+
+    ## UUID MANUAL O AUTOMÁTICO
+    echo -e "\e[91m >> UUID automático o manual?"
+    echo -e "\e[92m 1) Automático"
+    echo -e "\e[92m 2) Manual"
+    echo -ne "\e[91m >> Opción: \033[1;92m"
+    read opc
+
+    if [[ "$opc" = "2" ]]; then
+        while true; do
+            echo -ne "\e[91m >> Ingrese el UUID manual:\033[1;92m "
+            read manual_uuid
+
+            if [[ -z "$manual_uuid" ]]; then
+                echo -e "\e[91mEl UUID no puede estar vacío."
+                continue
+            fi
+
+            if [[ ! "$manual_uuid" =~ ^[0-9a-fA-F-]{36}$ ]]; then
+                echo -e "\e[91mFormato inválido. Debe ser un UUID válido."
+                continue
+            fi
+
+            UUID="$manual_uuid"
+            break
+        done
+    else
+        UUID=$(uuidgen)
+    fi
+
+    ## AGREGAR EN CONFIG
     sed -i '13i\           \{' /etc/v2ray/config.json
     sed -i '14i\           \"alterId": 0,' /etc/v2ray/config.json
     sed -i '15i\           \"id": "'$UUID'",' /etc/v2ray/config.json
     sed -i '16i\           \"email": "'$MAILITO'@gmail.com"' /etc/v2ray/config.json
     sed -i '17i\           \},' /etc/v2ray/config.json
+
     echo ""
     while true; do
-    echo -ne "\e[91m >> Digite um usuário: \033[1;92m"
-         read -p ": " nick
-         nick="$(echo $nick|sed -e 's/[^a-z0-9 -]//ig')"
-         if [[ -z $nick ]]; then
-         echo -e "$msg17" && continue
-         elif [[ "${#nick}" -lt "2" ]]; then
-         echo -e "$msg02" && continue
-         elif [[ "${#nick}" -gt "20" ]]; then
-         echo -e "$msg03" && continue
-         fi
-         break
+        echo -ne "\e[91m >> Digite um usuário: \033[1;92m"
+        read -p ": " nick
+        nick="$(echo $nick|sed -e 's/[^a-z0-9 -]//ig')"
+
+        if [[ -z $nick ]]; then
+            echo -e "$msg17" && continue
+        elif [[ "${#nick}" -lt "2" ]]; then
+            echo -e "$msg02" && continue
+        elif [[ "${#nick}" -gt "20" ]]; then
+            echo -e "$msg03" && continue
+        fi
+        break
     done
-    echo -e "\e[91m >> Adicionar UUID: \e[92m$UUID "
+
+    echo -e "\e[91m >> UUID utilizado: \e[92m$UUID"
+
     while true; do
-         echo -ne "\e[91m >> Duração de UUID (Dias):\033[1;92m " && read diasuser
-         if [[ -z "$diasuser" ]]; then
-         echo -e "$msg17" && continue
-         elif [[ "$diasuser" != +([0-9]) ]]; then
-         echo -e "$msg08" && continue
-         elif [[ "$diasuser" -gt "360" ]]; then
-         echo -e "$msg09" && continue
-         fi 
-         break
+        echo -ne "\e[91m >> Duração de UUID (Dias):\033[1;92m "
+        read diasuser
+
+        if [[ -z "$diasuser" ]]; then
+            echo -e "$msg17" && continue
+        elif [[ "$diasuser" != +([0-9]) ]]; then
+            echo -e "$msg08" && continue
+        elif [[ "$diasuser" -gt "360" ]]; then
+            echo -e "$msg09" && continue
+        fi 
+        break
     done
     #Lim
     [[ $(cat /etc/passwd |grep $1: |grep -vi [a-z]$1 |grep -v [0-9]$1 > /dev/null) ]] && return 1
