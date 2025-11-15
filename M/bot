@@ -2355,11 +2355,11 @@ while :; do
                     echo "Limite: ${message_text[$id]}" >>$CAD_ARQ
                     # Próximo campo.
                     ShellBot.sendMessage --chat_id ${message_from_id[$id]} \
-                        --text 'Duración: ' \
+                        --text 'Duracion: ' \
                         --reply_markup "$(ShellBot.ForceReply)"
                     ;;
 
-                'Validade em dias:')
+                'Duracion:')
                     verifica_acesso
                     [[ "$_erro" == '1' ]] && break
                     [[ ${message_text[$id]} != ?(+|-)+([0-9]) ]] && {
