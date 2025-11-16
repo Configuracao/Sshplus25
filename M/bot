@@ -228,6 +228,75 @@ criar_user() {
     }
 }
 
+fun_criar_uuid() {
+    local chat_id=$(ShellBot.MessageChatId)
+    
+    # Pregunta Automático o Manual
+    ShellBot.sendMessage --chat_id $chat_id \
+        --text "🔐 *CREAR UUID V2RAY*\n\nSeleccione una opción:\n\n1️⃣ UUID Automático\n2️⃣ UUID Manual" \
+        --parse_mode markdown
+
+    # Esperar respuesta
+    read opc
+
+    # Si elige manual
+    if [[ "$opc" = "2" ]]; then
+        while true; do
+            ShellBot.sendMessage --chat_id $chat_id \
+                --text "✍️ Envíe el UUID manual (formato estándar XX-XX...):"
+
+            read manual_uuid
+
+            [[ -z "$manual_uuid" ]] && {
+                ShellBot.sendMessage --chat_id $chat_id --text "❌ El UUID no puede estar vacío."
+                continue
+            }
+
+            [[ ! "$manual_uuid" =~ ^[0-9a-fA-F-]{36}$ ]] && {
+                ShellBot.sendMessage --chat_id $chat_id --text "❌ Formato inválido. Debe ser un UUID válido."
+                continue
+            }
+
+            UUID="$manual_uuid"
+            break
+        done
+
+    else
+        UUID=$(uuidgen)
+    fi
+
+    # Generar correo
+    MAILITO=$(cat /dev/urandom | tr -dc '[:alnum:]' | head -c 10)
+
+    # Insertar en config.json
+    sed -i '13i\           \{' /etc/v2ray/config.json
+    sed -i '14i\           \"alterId": 0,' /etc/v2ray/config.json
+    sed -i '15i\           \"id": "'$UUID'",' /etc/v2ray/config.json
+    sed -i '16i\           \"email": "'$MAILITO'@gmail.com"' /etc/v2ray/config.json
+    sed -i '17i\           \},' /etc/v2ray/config.json
+
+    # Pedir nombre de usuario
+    ShellBot.sendMessage --chat_id $chat_id --text "👤 Digite un nombre de usuario para esta UUID:"
+    read nick
+
+    # Pedir duración
+    ShellBot.sendMessage --chat_id $chat_id --text "⏳ Digite la duración del UUID (en días):"
+    read diasuser
+
+    # Calcular fecha
+    valid=$(date '+%C%y-%m-%d' -d " +$diasuser days")
+
+    # Guardar en archivo (logs)
+    echo "Usuario: $nick | UUID: $UUID | Expira: $valid" >> /etc/SSHPlus/v2ray/confuuid.log
+
+    # Respuesta final
+    ShellBot.sendMessage --chat_id $chat_id \
+        --text "✅ *UUID V2RAY CREADA*\n\n👤 Usuario: *$nick*\n🔑 UUID:\n\`$UUID\`\n📅 Expira: *$valid*\n📧 Email: $MAILITO@gmail.com" \
+        --parse_mode markdown
+
+    systemctl restart v2ray
+}
+
 fun_deluser() {
     [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
@@ -2113,6 +2182,7 @@ unset menu1
 menu1=''
 ShellBot.InlineKeyboardButton --button 'menu1' --line 1 --text 'CREAR USUARIO' --callback_data '_criaruser'
 ShellBot.InlineKeyboardButton --button 'menu1' --line 2 --text 'CREAR TESTE' --callback_data '_criarteste'
+ShellBot.InlineKeyboardButton --button 'menu1' --line 3 --text 'CREAR UUID V2RAY' --callback_data '_criaruuid'
 ShellBot.InlineKeyboardButton --button 'menu1' --line 3 --text 'REMOVER' --callback_data '_deluser'
 ShellBot.InlineKeyboardButton --button 'menu1' --line 4 --text 'SUSPENDER USUARIO' --callback_data '_sususer'
 ShellBot.InlineKeyboardButton --button 'menu1' --line 5 --text 'REMOVER SUSPENSO' --callback_data '_ativauser'
@@ -2134,6 +2204,7 @@ ShellBot.InlineKeyboardButton --button 'menu1' --line 8 --text 'RELATORIO' --cal
 ShellBot.InlineKeyboardButton --button 'menu1' --line 9 --text 'AJUDA' --callback_data '_ajuda'
 ShellBot.regHandleFunction --function fun_adduser --callback_data _criaruser
 ShellBot.regHandleFunction --function fun_add_teste --callback_data _criarteste
+ShellBot.regHandleFunction --function fun_criar_uuid --callback_data _criaruuid
 ShellBot.regHandleFunction --function fun_deluser --callback_data _deluser
 ShellBot.regHandleFunction --function fun_sususer --callback_data _sususer
 ShellBot.regHandleFunction --function fun_atiuser --callback_data _ativauser
