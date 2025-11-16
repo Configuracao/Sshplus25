@@ -2502,11 +2502,7 @@ while :; do
                     'ALTERAR CONTRASEÑA ROOT')
                     alterar_senha_root
                     ;;
-                (*"Nome do usuario:"*)
-                    alterar_senha_root
-                    [[ "$_erro" == '1' ]] && break
-                    ;;
-                (*"Nome do usuario:"*)
+                '👥 Alterar Limite 👥\n\nNome do usuario:')
                     verifica_acesso
                     [[ "$_erro" == '1' ]] && break
                     echo $_erro segundo
