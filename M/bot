@@ -573,7 +573,7 @@ alterar_limite() {
        [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]]; then
 
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "👥 Alterar Limite 👥\n\nNome do usuario:" \
+            --text "👥 Cambiar Limite 👥\n\nNome do usuario:" \
             --reply_markup "$(ShellBot.ForceReply)"
 
     else
@@ -2511,18 +2511,22 @@ while :; do
                     alterar_senha_root
                     [[ "$_erro" == '1' ]] && break
                     ;;
-                '👥 Alterar Limite 👥\n\nNome do usuario:')
-                    verifica_acesso
-                    [[ "$_erro" == '1' ]] && break
-                    echo $_erro segundo
-                    fun_verif_user ${message_text[$id]}
-                    echo "$_erro"
-                    [[ "$_erro" == '1' ]] && break
-                    echo "${message_text[$id]}" >/tmp/name-l
-                    ShellBot.sendMessage --chat_id ${message_from_id[$id]} \
-                        --text 'Novo limite:' \
-                        --reply_markup "$(ShellBot.ForceReply)"
-                    ;;
+                '👥 Alterar Limite 👥
+
+Nome do usuario:')
+    _erro=0   # ← LIMPIAR ERROR AQUÍ
+    verifica_acesso
+    [[ "$_erro" == '1' ]] && break
+
+    _erro=0   # LIMPIAR DE NUEVO ANTES DE LA SIGUIENTE FUNCIÓN
+    fun_verif_user ${message_text[$id]}
+    [[ "$_erro" == '1' ]] && break
+
+    echo "${message_text[$id]}" >/tmp/name-l
+    ShellBot.sendMessage --chat_id ${message_from_id[$id]} \
+        --text 'Novo limite:' \
+        --reply_markup "$(ShellBot.ForceReply)"
+    ;;
                 'Novo limite:')
                     verifica_acesso
                     [[ "$_erro" == '1' ]] && break
