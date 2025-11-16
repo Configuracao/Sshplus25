@@ -2523,21 +2523,28 @@ Nome do usuario:')
         --reply_markup "$(ShellBot.ForceReply)"
     ;;
                 'Novo limite:')
-                    verifica_acesso
-                    [[ "$_erro" == '1' ]] && break
-                    [[ ${message_text[$id]} != ?(+|-)+([0-9]) ]] && {
-                        ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-                            --text "$(echo -e "❌ Erro ! \n\n⚠️ Ultilize apenas numeros [EX: 1]")" \
-                            --parse_mode html
-                        break
-                    }
-                    alterar_limite_user $(cat /tmp/name-l) ${message_text[$id]}
-                    [[ "$_erro" == '1' ]] && break
-                    ShellBot.sendMessage --chat_id ${message_from_id[$id]} \
-                        --text "$(echo -e "=×=×=×=×=×=×=×=×=×=×=×\n<b>✅ LIMITE ALTERADO !</b> !\n=×=×=×=×=×=×=×=×=×=×=×\n\n<b>Usuario:</b> $(cat /tmp/name-l)\n<b>Novo Limite:</b> ${message_text[$id]}")" \
-                        --parse_mode html
-                    rm /tmp/name-l >/dev/null 2>&1
-                    ;;
+    _erro=0  # ← LIMPIAR ERROR AL ENTRAR
+    verifica_acesso
+    [[ "$_erro" == '1' ]] && break
+
+    # VERIFICAR SOLO NÚMEROS
+    [[ ${message_text[$id]} != ?(+|-)+([0-9]) ]] && {
+        ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
+            --text "$(echo -e "❌ Erro ! \n\n⚠️ Ultilize apenas numeros [EX: 1]")" \
+            --parse_mode html
+        break
+    }
+
+    _erro=0  # ← LIMPIAR ANTES DE LLAMAR ALTERAR LIMITE
+    alterar_limite_user $(cat /tmp/name-l) ${message_text[$id]}
+    [[ "$_erro" == '1' ]] && break
+
+    ShellBot.sendMessage --chat_id ${message_from_id[$id]} \
+        --text "$(echo -e "=×=×=×=×=×=×=×=×=×=×=×\n<b>✅ LIMITE ALTERADO !</b>\n=×=×=×=×=×=×=×=×=×=×=×\n\n<b>Usuario:</b> $(cat /tmp/name-l)\n<b>Novo Limite:</b> ${message_text[$id]}")" \
+        --parse_mode html
+
+    rm /tmp/name-l >/dev/null 2>&1
+    ;;
                 '⏳ Alterar Data ⏳\n\nNome do usuario:')
                     verifica_acesso
                     [[ "$_erro" == '1' ]] && break
