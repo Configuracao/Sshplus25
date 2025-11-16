@@ -228,15 +228,27 @@ criar_user() {
     }
 }
 
-fun_criar_uuid() {
-    local chat_id=$(ShellBot.CallbackQueryMessageChatId)
+fun_uuid_manual() {
+    [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
+        ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
+            --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
+        return 0
+    }
 
-    ShellBot.sendMessage --chat_id $chat_id \
-        --text "🔐 CREAR UUID (V2RAY)\n📌 Envie el *UUID manual*:" \
-        --parse_mode markdown \
-        --reply_markup "$(ShellBot.ForceReply)"
+    [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
 
-    aguardando[$chat_id]="uuid_manual"
+        ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
+            --text "🔐 CREAR UUID (V2RAY)\n📌 Envie el *UUID manual*:" \
+            --parse_mode markdown \
+            --reply_markup "$(ShellBot.ForceReply)"
+
+        aguardando[${callback_query_message_chat_id[$id]}]="uuid_manual"
+
+    } || {
+        ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
+            --text "🚫 ACESSO NEGADO 🚫"
+        return 0
+    }
 }
 
 fun_deluser() {
@@ -2410,16 +2422,16 @@ while :; do
 
     UUID_MANUAL="${message_text[$id]}"
 
-    # Validación
+    # Validación del formato UUID
     if [[ ! "$UUID_MANUAL" =~ ^[0-9a-fA-F-]{36}$ ]]; then
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "❌ *UUID inválido*\n\nDebe tener formato:\nxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" \
+            --text "❌ *UUID inválido*\n\nFormato correcto:\n\`\`\`\nxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\n\`\`\`" \
             --parse_mode markdown
         break
     fi
 
     ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-        --text "✅ UUID recibido:\n\`\`\`\n$UUID_MANUAL\n\`\`\`" \
+        --text "✅ UUID recibido correctamente.\n\`\`\`\n$UUID_MANUAL\n\`\`\`" \
         --parse_mode markdown
     ;;
                 '📥 ARQUIVOS DISPONIVEIS 📥\n\nDeseja baixar? Sim ou Nao?:')
