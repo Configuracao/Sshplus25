@@ -228,19 +228,27 @@ criar_user() {
     }
 }
 
-fun_criar_uuid() {
-    local chat_id=$(ShellBot.CallbackQueryMessageChatId)
-    local callback_id=$(ShellBot.CallbackQueryId)
+fun_uuid_manual() {
+    [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
+        ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
+            --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
+        return 0
+    }
 
-    ShellBot.answerCallbackQuery --callback_query_id "$callback_id"
+    [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
 
-    ShellBot.sendMessage \
-        --chat_id "$chat_id" \
-        --text "✍️ *Ingrese el UUID manual:*" \
-        --parse_mode markdown \
-        --reply_markup "$(ShellBot.ForceReply)"
+        ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
+            --text "🔐 CREAR UUID (V2RAY)\n\n📌 Envie o *nome do usuario*:" \
+            --parse_mode markdown \
+            --reply_markup "$(ShellBot.ForceReply)"
 
-    aguardando["$chat_id"]="uuid_manual_ingreso"
+        aguardando[${callback_query_message_chat_id[$id]}]="uuid_manual_nome"
+
+    } || {
+        ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
+            --text "🚫 ACESSO NEGADO 🚫"
+        return 0
+    }
 }
 
 fun_deluser() {
@@ -2128,7 +2136,6 @@ unset menu1
 menu1=''
 ShellBot.InlineKeyboardButton --button 'menu1' --line 1 --text 'CREAR USUARIO' --callback_data '_criaruser'
 ShellBot.InlineKeyboardButton --button 'menu1' --line 2 --text 'CREAR TESTE' --callback_data '_criarteste'
-ShellBot.InlineKeyboardButton --button 'menu1' --line 3 --text 'CREAR UUID V2RAY' --callback_data '_criaruuid'
 ShellBot.InlineKeyboardButton --button 'menu1' --line 3 --text 'REMOVER' --callback_data '_deluser'
 ShellBot.InlineKeyboardButton --button 'menu1' --line 4 --text 'SUSPENDER USUARIO' --callback_data '_sususer'
 ShellBot.InlineKeyboardButton --button 'menu1' --line 5 --text 'REMOVER SUSPENSO' --callback_data '_ativauser'
@@ -2139,6 +2146,7 @@ ShellBot.InlineKeyboardButton --button 'menu1' --line 9 --text 'USUARIOS ONLINE'
 ShellBot.InlineKeyboardButton --button 'menu1' --line 10 --text 'INFO USUARIOS' --callback_data '_verusers'
 ShellBot.InlineKeyboardButton --button 'menu1' --line 11 --text 'REMOVER EXPIRADOS' --callback_data '_expirados'
 ShellBot.InlineKeyboardButton --button 'menu1' --line 12 --text 'ALTERAR CONTRASEÑA ROOT' --callback_data '_senharoot'
+ShellBot.InlineKeyboardButton --button 'menu1' --line 13 --text 'CREAR UUID MANUAL' --callback_data '_uuidmanual'
 ShellBot.InlineKeyboardButton --button 'menu1' --line 1 --text 'INFO VPS' --callback_data '_infovps'
 ShellBot.InlineKeyboardButton --button 'menu1' --line 2 --text 'OTIMIZAR' --callback_data '_otimizar'
 ShellBot.InlineKeyboardButton --button 'menu1' --line 3 --text 'ARQUIVOS' --callback_data '_arqdown'
@@ -2150,7 +2158,6 @@ ShellBot.InlineKeyboardButton --button 'menu1' --line 8 --text 'RELATORIO' --cal
 ShellBot.InlineKeyboardButton --button 'menu1' --line 9 --text 'AJUDA' --callback_data '_ajuda'
 ShellBot.regHandleFunction --function fun_adduser --callback_data _criaruser
 ShellBot.regHandleFunction --function fun_add_teste --callback_data _criarteste
-ShellBot.regHandleFunction --function fun_criar_uuid --callback_data _criaruuid
 ShellBot.regHandleFunction --function fun_deluser --callback_data _deluser
 ShellBot.regHandleFunction --function fun_sususer --callback_data _sususer
 ShellBot.regHandleFunction --function fun_atiuser --callback_data _ativauser
@@ -2162,6 +2169,7 @@ ShellBot.regHandleFunction --function monitor_ssh --callback_data _monitor
 ShellBot.regHandleFunction --function ver_users --callback_data _verusers
 ShellBot.regHandleFunction --function fun_exp_user --callback_data _expirados
 ShellBot.regHandleFunction --function alterar_senha_root --callback_data _senharoot
+ShellBot.regHandleFunction --function fun_uuid_manual --callback_data _uuidmanual
 ShellBot.regHandleFunction --function otimizer --callback_data _otimizar
 ShellBot.regHandleFunction --function speed_test --callback_data _speedteste
 ShellBot.regHandleFunction --function infovps --callback_data _infovps
@@ -2329,23 +2337,6 @@ while :; do
                         --text 'Contraseña:' \
                         --reply_markup "$(ShellBot.ForceReply)" # Força a resposta.
                     ;;
-                    if [[ ${aguardando[$chat_id]} == "uuid_nombre" ]]; then
-    usuario="${message_text[$id]}"
-
-    # Generar UUID manualmente
-    uuid=$(cat /proc/sys/kernel/random/uuid)
-
-    # Guardar en el archivo del script
-    echo "User: $usuario  UUID: $uuid" >> /etc/SSHPlus/v2ray/confuuid.log
-
-    ShellBot.sendMessage --chat_id $chat_id \
-        --text "✅ UUID creado\n\n👤 Usuario: *$usuario*\n🔑 UUID: \`$uuid\`" \
-        --parse_mode markdown
-
-    unset aguardando[$chat_id]
-    continue
-fi
-                ;;
                 'Contraseña:')
                     sizepass=$(echo -e ${#message_text[$id]})
                     verifica_acesso
@@ -2424,6 +2415,31 @@ fi
                         break
                     }
                     ;;
+                    '🔐 *CREAR UUID V2RAY*\n\nIngrese el UUID manualmente:'| 'Ingrese el UUID manualmente:' )
+    verifica_acesso
+    [[ "$_erro" == '1' ]] && break
+
+    # Guardamos el UUID ingresado
+    UUID_MANUAL="${message_text[$id]}"
+
+    # Validación básica
+    if [[ ! "$UUID_MANUAL" =~ ^[0-9a-fA-F-]{36}$ ]]; then
+        ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
+            --text "❌ *UUID inválido*\n\nDebe tener el formato estándar:\nxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" \
+            --parse_mode markdown
+        break
+    fi
+
+    # Aquí ya tienes el UUID válido → CREAR USUARIO EN V2RAY
+    # -------------------------------------------------------
+    # Puedes poner aquí tu código de creación de V2RAY,
+    # por ejemplo agregando al config.json o usando x-ui API.
+    # -------------------------------------------------------
+
+    ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
+        --text "✅ *UUID creado correctamente*\n\nUUID:\n\`\`\`\n$UUID_MANUAL\n\`\`\`" \
+        --parse_mode markdown
+    ;;
                 '📥 ARQUIVOS DISPONIVEIS 📥\n\nDeseja baixar? Sim ou Nao?:')
                     verifica_acesso
                     [[ "$_erro" == '1' ]] && break
