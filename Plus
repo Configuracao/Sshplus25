@@ -201,27 +201,27 @@ cd $HOME
 echo "clear" >> /root/.bashrc
     echo 'DATE=$(date +"%d-%m-%y")' >>/root/.bashrc
     echo 'TIME=$(date +"%T")' >>/root/.bashrc
-    echo 'figlet -k MODDER | lolcat' >>/root/.bashrc
-    echo 'echo -e "\033[1;32m NOME DO SERVIDOR : \033[38;5;196m$HOSTNAME"' >>/root/.bashrc
-    echo 'echo -e "\033[1;32m SERVIDOR LIGADO À : \033[1;31m$(uptime -p)"' >>/root/.bashrc
-    echo 'echo -e "\033[1;32m DATA : \033[1;31m$DATE"' >>/root/.bashrc
+    echo 'figlet -k HIRVIP HB | lolcat' >>/root/.bashrc
+    echo 'echo -e "\033[1;32m NOMBRE DE SERVIDOR : \033[38;5;196m$HOSTNAME"' >>/root/.bashrc
+    echo 'echo -e "\033[1;32m SERVIDOR CONECTADO A : \033[1;31m$(uptime -p)"' >>/root/.bashrc
+    echo 'echo -e "\033[1;32m FECHA : \033[1;31m$DATE"' >>/root/.bashrc
     echo 'echo -e "\033[1;32m HORA : \033[1;31m$TIME"' >>/root/.bashrc
-    echo 'echo -e "\033[1;32m DIGITE : \033[1;31mmenu\033[1;37m"' >>/root/.bashrc
+    echo 'echo -e "\033[1;32m DIGITE : \033[1;31mmenu o h\033[1;37m"' >>/root/.bashrc
     echo 'echo -e ""' >>/root/.bashrc
     date=$(date '+%Y-%m-%d <> %H:%M:%S')
     echo -e "\033[1;37m $system                          $date"
     
     echo -e "\033[1;37m                INSTALACAO CONCLUIDA               \033[1;33m "
-    echo -e "\033[1;33mPARA INICIAR DIGITE: \033[1;36mmenu\033[1;33m E DÊ ENTER \033[0m"
+    echo -e "\033[1;33mPARA INICIAR DIGITE: \033[1;36mmenu o h\033[1;33m Y DELE ENTER \033[0m"
     
-    echo -e "\033[1;37mMAIS INFORMACOES \033[1;31m(\033[1;36mTELEGRAM\033[1;31m)↓ \033[0m"
-    echo -e "\033[1;37m@Sshplus25\033[0m"
+    echo -e "\033[1;37mMAS INFORMACION \033[1;31m(\033[1;36mTELEGRAM\033[1;31m)↓ \033[0m"
+    echo -e "\033[1;37m@Al3xv1p\033[0m"
     
-    echo -e "\033[1;37mMODS CONECTA5G \033[1;31m(\033[1;36mTELEGRAM\033[1;31m)↓ \033[0m"
-    echo -e "\033[1;37m@modderajudacanal\033[0m"
+    echo -e "\033[1;37mDUEÑO UNICO \033[1;31m(\033[1;36mTELEGRAM\033[1;31m)↓ \033[0m"
+    echo -e "\033[1;37m@Al3xv1p\033[0m"
     
-    echo -e "\033[1;37mPAINEL DE ATUALIZAÇÃO CONECTA5G \033[1;31m(\033[1;36mTELEGRAM\033[1;31m)↓ \033[0m"
-    echo -e "\033[1;37mhttps://www.painelconecta5g.com\033[0m"
+    echo -e "\033[1;37mPANEL WEB \033[1;31m(\033[1;36mTELEGRAM\033[1;31m)↓ \033[0m"
+    echo -e "\033[1;37mhttps://web.hirvip-5g.shop\033[0m"
     
     rm $HOME/Plus && cat /dev/null > ~/.bash_history && history -c
 
