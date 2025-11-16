@@ -228,27 +228,15 @@ criar_user() {
     }
 }
 
-fun_uuid_manual() {
-    [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
-        ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
-        return 0
-    }
+fun_criar_uuid() {
+    local chat_id=$(ShellBot.CallbackQueryMessageChatId)
 
-    [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
+    ShellBot.sendMessage --chat_id $chat_id \
+        --text "🔐 *CREAR UUID V2RAY*\n\nIngrese el UUID manualmente:" \
+        --parse_mode markdown \
+        --reply_markup "$(ShellBot.ForceReply)"
 
-        ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "🔐 CREAR UUID (V2RAY)\n\n📌 Envie o *nome do usuario*:" \
-            --parse_mode markdown \
-            --reply_markup "$(ShellBot.ForceReply)"
-
-        aguardando[${callback_query_message_chat_id[$id]}]="uuid_manual_nome"
-
-    } || {
-        ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "🚫 ACESSO NEGADO 🚫"
-        return 0
-    }
+    aguardando[$chat_id]="uuid_manual"
 }
 
 fun_deluser() {
