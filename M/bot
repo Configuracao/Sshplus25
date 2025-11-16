@@ -481,52 +481,33 @@ fun_ati_user() {
 
 
 alterar_senha() {
-
-    # Bloqueia se estiver suspenso
-    if [[ "$(grep -wc ${callback_query_from_username} "$suspensos")" != "0" ]]; then
-        ShellBot.answerCallbackQuery --callback_query_id "${callback_query_id[$id]}" \
+    [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
+        ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
             --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
         return 0
-    fi
-
-    # Admin OU usuário ativo pode mudar a senha
-    if [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || \
-       [[ "$(grep -wc ${callback_query_from_username} "$ativos")" != "0" ]]; then
-
-        ShellBot.sendMessage --chat_id "${callback_query_message_chat_id[$id]}" \
+    }
+    [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
+        ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
             --text "🔐 Alterar Contraseña 🔐\n\nNome do usuario:" \
             --reply_markup "$(ShellBot.ForceReply)"
-
-    else
-        ShellBot.answerCallbackQuery --callback_query_id "${callback_query_id[$id]}" \
+    } || {
+        ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
             --text "🚫 ACESSO NEGADO 🚫"
         return 0
-    fi
+    }
 }
 
 alterar_senha_user() {
-    usuario="$1"
-    senha="$2"
-
-    # Muda senha no sistema
-    echo "${usuario}:${senha}" | chpasswd
-
-    # Atualiza senha no diretório SSHPlus
-    echo "$senha" > "/etc/SSHPlus/senha/$usuario"
-
-    # Atualiza senha no diretório da revenda se existir
-    if [[ -e "/etc/bot/revenda/${message_from_username}/usuarios/$usuario" ]]; then
-        
-        senha2=$(awk -F ':' '{print $2}' "/etc/bot/revenda/${message_from_username}/usuarios/$usuario")
-
-        sed -i "s/:${senha2}$/:${senha}/" "/etc/bot/revenda/${message_from_username}/usuarios/$usuario"
-        sed -i "s/:${senha2}$/:${senha}/" "/etc/bot/info-users/$usuario"
-    fi
-
-    # Mata sessão SSH ativa do usuário para aplicar a nova senha
-    if ps -u "$usuario" | grep -q sshd; then
-        pkill -u "$usuario" >/dev/null 2>&1
-    fi
+    usuario=$1
+    senha=$2
+    echo "$usuario:$senha" | chpasswd
+    echo "$senha" >/etc/SSHPlus/senha/$usuario
+    [[ -e /etc/bot/revenda/${message_from_username}/usuarios/$usuario ]] && {
+        senha2=$(cat /etc/bot/revenda/${message_from_username}/usuarios/$usuario | awk -F : {'print $2'})
+        sed -i "/$usuario/ s/\b$senha2\b/$senha/g" /etc/bot/revenda/${message_from_username}/usuarios/$usuario
+        sed -i "/$usuario/ s/\b$senha2\b/$senha/g" /etc/bot/info-users/$usuario
+    }
+    [[ $(ps -u $usuario | grep sshd | wc -l) != '0' ]] && pkill -u $usuario >/dev/null 2>&1
 }
 
 alterar_senha_root() {
@@ -2486,34 +2467,56 @@ while :; do
                         --text "✅ *Usuario ativado com sucesso.* 🚮" \
                         --parse_mode markdown
                     ;;
-                '🔐 Alterar Senha 🔐\n\nNome do usuario:')
-                    verifica_acesso
-                    [[ "$_erro" == '1' ]] && break
-                    fun_verif_user ${message_text[$id]}
-                    echo "$_erro"
-                    [[ "$_erro" == '1' ]] && break
-                    echo "${message_text[$id]}" >/tmp/name-s
-                    ShellBot.sendMessage --chat_id ${message_from_id[$id]} \
-                        --text 'Nova senha:' \
-                        --reply_markup "$(ShellBot.ForceReply)"
-                    ;;
-                'Nova senha:')
-                    sizepass=$(echo -e ${#message_text[$id]})
-                    verifica_acesso
-                    [[ "$_erro" == '1' ]] && break
-                    [[ "$sizepass" -lt '4' ]] && {
-                        ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-                            --text "$(echo -e "❌ Erro !\n\n⚠️ Use mínimo 4 caracteres [EX: 1234]")" \
-                            --parse_mode html
-                        break
-                    }
-                    alterar_senha_user $(cat /tmp/name-s) ${message_text[$id]}
-                    [[ "$_erro" == '1' ]] && break
-                    ShellBot.sendMessage --chat_id ${message_from_id[$id]} \
-                        --text "$(echo -e "=×=×=×=×=×=×=×=×=×=×=×\n<b>✅ CONTRASEÑA ALTERADA !</b> !\n=×=×=×=×=×=×=×=×=×=×=×\n\n<b>Usuario:</b> $(cat /tmp/name-s)\n<b>Nova senha:</b> ${message_text[$id]}")" \
-                        --parse_mode html
-                    rm /tmp/name-s >/dev/null 2>&1
-                    ;;
+                # ================= ALTERAR SENHA ================= #
+'🔐 Alterar Senha 🔐')
+    verifica_acesso
+    [[ "$_erro" == '1' ]] && break
+
+    ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
+        --text '🔐 Alterar Senha 🔐\n\nNome do usuario:' \
+        --reply_markup "$(ShellBot.ForceReply)"
+    ;;
+
+# ======== RECEBENDO NOME DO USUARIO ======== #
+'🔐 Alterar Senha 🔐
+    
+Nome do usuario:')
+    verifica_acesso
+    [[ "$_erro" == '1' ]] && break
+
+    # Verifica usuário
+    fun_verif_user "${message_text[$id]}"
+    [[ "$_erro" == '1' ]] && break
+
+    echo "${message_text[$id]}" >/tmp/name-s
+
+    ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
+        --text 'Nova senha:' \
+        --reply_markup "$(ShellBot.ForceReply)"
+    ;;
+
+# ========== RECEBE A NOVA SENHA ========== #
+'Nova senha:')
+    verifica_acesso
+    [[ "$_erro" == '1' ]] && break
+
+    sizepass=${#message_text[$id]}
+    [[ "$sizepass" -lt '4' ]] && {
+        ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
+            --text "❌ Erro !\n\n⚠️ Use mínimo 4 caracteres [EX: 1234]" \
+            --parse_mode html
+        break
+    }
+
+    alterar_senha_user "$(cat /tmp/name-s)" "${message_text[$id]}"
+    [[ "$_erro" == '1' ]] && break
+
+    ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
+        --text "<b>✅ CONTRASEÑA ALTERADA !</b>\n\n<b>Usuario:</b> $(cat /tmp/name-s)\n<b>Nova senha:</b> ${message_text[$id]}" \
+        --parse_mode html
+
+    rm -f /tmp/name-s
+    ;;
                     '🔐 Alterar Contraseña ROOT 🔐\n\nDigite a nova senha:')
                     [[ "$_erro" == '1' ]] && break
                     alterar_senha_root_exec
