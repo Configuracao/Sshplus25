@@ -177,7 +177,7 @@ fun_adduser() {
     }
     [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "👤 CREAR USUARIO 👤\n\nNombre de usuario:" \
+            --text "👤 CREAR USUARIO 👤\n\nNome do usuario:" \
             --reply_markup "$(ShellBot.ForceReply)"
     } || {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
@@ -236,7 +236,7 @@ fun_deluser() {
     }
     [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "🗑 REMOVER USUARIO 🗑\n\nNombre de usuario:" \
+            --text "🗑 REMOVER USUARIO 🗑\n\nNome do usuario:" \
             --reply_markup "$(ShellBot.ForceReply)"
     } || {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
@@ -331,7 +331,7 @@ fun_sususer() {
             [[ $(cat $arq_info | wc -l) = '0' ]] && rm $arq_info && break
         done
         ShellBot.sendMessage --chat_id $id_admin \
-            --text "🗑 SUSPENDER USUARIO 🗑\n\nNombre de usuario:" \
+            --text "🗑 SUSPENDER USUARIO 🗑\n\nNome do usuario:" \
             --reply_markup "$(ShellBot.ForceReply)"
         ShellBot.addHandler --function_call fun_sus_user --callback_data "suspend_user"
     elif [[ "$(grep -wc "${callback_query_from_username}" $ativos)" != '0' ]]; then
@@ -387,7 +387,7 @@ fun_sususer() {
             [[ $(cat $arq_info | wc -l) = '0' ]] && rm $arq_info && break
         done
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "🗑 SUSPENDER USUARIO 🗑\n\nNombre de usuario:" \
+            --text "🗑 SUSPENDER USUARIO 🗑\n\nNome do usuario:" \
             --reply_markup "$(ShellBot.ForceReply)"
         ShellBot.addHandler --function_call fun_sus_user --callback_data "suspend_user"
     else
@@ -441,7 +441,7 @@ fun_atiuser() {
             --parse_mode html
 
         ShellBot.sendMessage --chat_id $id_admin \
-            --text "🗑 REMOVER SUSPENSO 🗑\n\nNombre de usuario:" \
+            --text "🗑 REMOVER SUSPENSO 🗑\n\nNome do usuario:" \
             --reply_markup "$(ShellBot.ForceReply)"
         ShellBot.addHandler --function_call fun_ati_user --callback_data "suspend_user"
     else
@@ -488,7 +488,7 @@ alterar_senha() {
     }
     [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "🔐 Alterar Contraseña 🔐\n\nNombre de usuario:" \
+            --text "🔐 Alterar Contraseña 🔐\n\nNome do usuario:" \
             --reply_markup "$(ShellBot.ForceReply)"
     } || {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
@@ -569,7 +569,7 @@ alterar_limite() {
     }
     [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "👥 Alterar Limite 👥\n\nNombre de usuario:" \
+            --text "👥 Alterar Limite 👥\n\nNome do usuario:" \
             --reply_markup "$(ShellBot.ForceReply)"
     } || {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
@@ -633,7 +633,7 @@ alterar_data() {
     }
     [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "⏳ Alterar Data ⏳\n\nNombre de usuario:" \
+            --text "⏳ Alterar Data ⏳\n\nNome do usuario:" \
             --reply_markup "$(ShellBot.ForceReply)"
     } || {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
@@ -2274,7 +2274,7 @@ while :; do
             if [[ ${message_reply_to_message_message_id[$id]} ]]; then
                 # Analisa a interface de resposta.
                 case ${message_reply_to_message_text[$id]} in
-                '👤 CREAR USUARIO 👤\n\nNombre de usuario:')
+                '👤 CREAR USUARIO 👤\n\nNome do usuario:')
                     verifica_acesso
                     [[ "$_erro" == '1' ]] && break
                     [[ "$(awk -F : '$3 >= 1000 { print $1 }' /etc/passwd | grep -w ${message_text[$id]} | wc -l)" != '0' ]] && {
@@ -2440,7 +2440,7 @@ while :; do
                     >$CAD_ARQ
                     break
                     ;;
-                '🗑 REMOVER USUARIO 🗑\n\nNombre de usuario:')
+                '🗑 REMOVER USUARIO 🗑\n\nNome do usuario:')
                     verifica_acesso
                     [[ "$_erro" == '1' ]] && break
                     fun_del_user ${message_text[$id]}
@@ -2449,7 +2449,7 @@ while :; do
                         --text "✅ *Removido com sucesso.* 🚮" \
                         --parse_mode markdown
                     ;;
-                '🗑 SUSPENDER USUARIO 🗑\n\nNombre de usuario:')
+                '🗑 SUSPENDER USUARIO 🗑\n\nNome do usuario:')
                     verifica_acesso
                     [[ "$_erro" == '1' ]] && break
                     fun_sus_user ${message_text[$id]}
@@ -2458,7 +2458,7 @@ while :; do
                         --text "✅ *Suspendido com sucesso.* 🚮" \
                         --parse_mode markdown
                     ;;
-                '🗑 REMOVER SUSPENSO 🗑\n\nNombre de usuario:')
+                '🗑 REMOVER SUSPENSO 🗑\n\nNome do usuario:')
                     verifica_acesso
                     [[ "$_erro" == '1' ]] && break
                     fun_ati_user ${message_text[$id]}
@@ -2467,7 +2467,7 @@ while :; do
                         --text "✅ *Usuario ativado com sucesso.* 🚮" \
                         --parse_mode markdown
                     ;;
-                '🔐 Alterar Contraseña 🔐\n\nNombre de usuario:')
+                '🔐 Alterar Contraseña 🔐\n\nNome do usuario:')
                     verifica_acesso
                     [[ "$_erro" == '1' ]] && break
                     fun_verif_user ${message_text[$id]}
@@ -2502,11 +2502,11 @@ while :; do
                     'ALTERAR CONTRASEÑA ROOT')
                     alterar_senha_root
                     ;;
-                '👥 Alterar Limite 👥\n\nNombre de usuario:')
+                '👥 Alterar Limite 👥\n\nNome do usuario:')
                     alterar_senha_root
                     [[ "$_erro" == '1' ]] && break
                     ;;
-                '👥 Alterar Limite 👥\n\nNombre de usuario:')
+                '👥 Alterar Limite 👥\n\nNome do usuario:')
                     verifica_acesso
                     [[ "$_erro" == '1' ]] && break
                     echo $_erro segundo
@@ -2534,7 +2534,7 @@ while :; do
                         --parse_mode html
                     rm /tmp/name-l >/dev/null 2>&1
                     ;;
-                '⏳ Alterar Data ⏳\n\nNombre de usuario:')
+                '⏳ Alterar Data ⏳\n\nNome do usuario:')
                     verifica_acesso
                     [[ "$_erro" == '1' ]] && break
                     fun_verif_user ${message_text[$id]}
