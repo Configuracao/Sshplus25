@@ -2415,7 +2415,8 @@ while :; do
                         break
                     }
                     ;;
-                    '🔐 CREAR UUID (V2RAY)📌 Envie el UUID manual:')
+                    '🔐 CREAR UUID (V2RAY)
+📌 Envie el UUID manual:')
     verifica_acesso
     [[ "$_erro" == '1' ]] && break
 
