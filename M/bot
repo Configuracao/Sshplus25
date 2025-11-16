@@ -481,33 +481,52 @@ fun_ati_user() {
 
 
 alterar_senha() {
-    [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
-        ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
+
+    # Bloqueia se estiver suspenso
+    if [[ "$(grep -wc ${callback_query_from_username} "$suspensos")" != "0" ]]; then
+        ShellBot.answerCallbackQuery --callback_query_id "${callback_query_id[$id]}" \
             --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
         return 0
-    }
-    [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
-        ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
+    fi
+
+    # Admin OU usuário ativo pode mudar a senha
+    if [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || \
+       [[ "$(grep -wc ${callback_query_from_username} "$ativos")" != "0" ]]; then
+
+        ShellBot.sendMessage --chat_id "${callback_query_message_chat_id[$id]}" \
             --text "🔐 Alterar Contraseña 🔐\n\nNome do usuario:" \
             --reply_markup "$(ShellBot.ForceReply)"
-    } || {
-        ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
+
+    else
+        ShellBot.answerCallbackQuery --callback_query_id "${callback_query_id[$id]}" \
             --text "🚫 ACESSO NEGADO 🚫"
         return 0
-    }
+    fi
 }
 
 alterar_senha_user() {
-    usuario=$1
-    senha=$2
-    echo "$usuario:$senha" | chpasswd
-    echo "$senha" >/etc/SSHPlus/senha/$usuario
-    [[ -e /etc/bot/revenda/${message_from_username}/usuarios/$usuario ]] && {
-        senha2=$(cat /etc/bot/revenda/${message_from_username}/usuarios/$usuario | awk -F : {'print $2'})
-        sed -i "/$usuario/ s/\b$senha2\b/$senha/g" /etc/bot/revenda/${message_from_username}/usuarios/$usuario
-        sed -i "/$usuario/ s/\b$senha2\b/$senha/g" /etc/bot/info-users/$usuario
-    }
-    [[ $(ps -u $usuario | grep sshd | wc -l) != '0' ]] && pkill -u $usuario >/dev/null 2>&1
+    usuario="$1"
+    senha="$2"
+
+    # Muda senha no sistema
+    echo "${usuario}:${senha}" | chpasswd
+
+    # Atualiza senha no diretório SSHPlus
+    echo "$senha" > "/etc/SSHPlus/senha/$usuario"
+
+    # Atualiza senha no diretório da revenda se existir
+    if [[ -e "/etc/bot/revenda/${message_from_username}/usuarios/$usuario" ]]; then
+        
+        senha2=$(awk -F ':' '{print $2}' "/etc/bot/revenda/${message_from_username}/usuarios/$usuario")
+
+        sed -i "s/:${senha2}$/:${senha}/" "/etc/bot/revenda/${message_from_username}/usuarios/$usuario"
+        sed -i "s/:${senha2}$/:${senha}/" "/etc/bot/info-users/$usuario"
+    fi
+
+    # Mata sessão SSH ativa do usuário para aplicar a nova senha
+    if ps -u "$usuario" | grep -q sshd; then
+        pkill -u "$usuario" >/dev/null 2>&1
+    fi
 }
 
 alterar_senha_root() {
