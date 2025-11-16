@@ -567,15 +567,20 @@ alterar_limite() {
             --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
         return 0
     }
-    [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
+
+    # CORREGIDO: Agrupación con (
+    if [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || \
+       [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]]; then
+
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
             --text "👥 Alterar Limite 👥\n\nNome do usuario:" \
             --reply_markup "$(ShellBot.ForceReply)"
-    } || {
+
+    else
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
             --text "🚫 ACESSO NEGADO 🚫"
         return 0
-    }
+    fi
 }
 
 alterar_limite_user() {
