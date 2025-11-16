@@ -2415,23 +2415,17 @@ while :; do
                         break
                     }
                     ;;
-                    '🔐 CREAR UUID (V2RAY)
-📌 Envie el *UUID manual*:' | '📌 Envie el *UUID manual*:' )
+                    '🔐 CREAR UUID (V2RAY)📌 Envie el UUID manual:')
     verifica_acesso
     [[ "$_erro" == '1' ]] && break
 
     UUID_MANUAL="${message_text[$id]}"
 
-    # Validación del formato UUID
-    if [[ ! "$UUID_MANUAL" =~ ^[0-9a-fA-F-]{36}$ ]]; then
-        ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "❌ *UUID inválido*\n\nFormato correcto:\n\`\`\`\nxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\n\`\`\`" \
-            --parse_mode markdown
-        break
-    fi
+    # Guarda el UUID manual donde tú lo necesites
+    echo "$UUID_MANUAL" > /etc/SSHPlus/v2ray/manual_uuid.txt
 
     ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-        --text "✅ UUID recibido correctamente.\n\`\`\`\n$UUID_MANUAL\n\`\`\`" \
+        --text "✅ UUID manual guardado:\n\`\`\`\n$UUID_MANUAL\n\`\`\`" \
         --parse_mode markdown
     ;;
                 '📥 ARQUIVOS DISPONIVEIS 📥\n\nDeseja baixar? Sim ou Nao?:')
