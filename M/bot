@@ -232,7 +232,7 @@ fun_criar_uuid() {
     local chat_id=$(ShellBot.CallbackQueryMessageChatId)
 
     ShellBot.sendMessage --chat_id $chat_id \
-        --text "🔐 *CREAR UUID V2RAY*\n\nIngrese el UUID manualmente:" \
+        --text "🔐 CREAR UUID (V2RAY)\n📌 Envie el *UUID manual*:" \
         --parse_mode markdown \
         --reply_markup "$(ShellBot.ForceReply)"
 
@@ -2403,29 +2403,23 @@ while :; do
                         break
                     }
                     ;;
-                    '🔐 *CREAR UUID V2RAY*\n\nIngrese el UUID manualmente:'| 'Ingrese el UUID manualmente:' )
+                    '🔐 CREAR UUID (V2RAY)
+📌 Envie el *UUID manual*:' | '📌 Envie el *UUID manual*:' )
     verifica_acesso
     [[ "$_erro" == '1' ]] && break
 
-    # Guardamos el UUID ingresado
     UUID_MANUAL="${message_text[$id]}"
 
-    # Validación básica
+    # Validación
     if [[ ! "$UUID_MANUAL" =~ ^[0-9a-fA-F-]{36}$ ]]; then
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "❌ *UUID inválido*\n\nDebe tener el formato estándar:\nxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" \
+            --text "❌ *UUID inválido*\n\nDebe tener formato:\nxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" \
             --parse_mode markdown
         break
     fi
 
-    # Aquí ya tienes el UUID válido → CREAR USUARIO EN V2RAY
-    # -------------------------------------------------------
-    # Puedes poner aquí tu código de creación de V2RAY,
-    # por ejemplo agregando al config.json o usando x-ui API.
-    # -------------------------------------------------------
-
     ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-        --text "✅ *UUID creado correctamente*\n\nUUID:\n\`\`\`\n$UUID_MANUAL\n\`\`\`" \
+        --text "✅ UUID recibido:\n\`\`\`\n$UUID_MANUAL\n\`\`\`" \
         --parse_mode markdown
     ;;
                 '📥 ARQUIVOS DISPONIVEIS 📥\n\nDeseja baixar? Sim ou Nao?:')
