@@ -2423,7 +2423,7 @@ while :; do
     UUID_MANUAL="${message_text[$id]}"
 
     # Guarda el UUID manual donde tú lo necesites
-    echo "$UUID_MANUAL" > /etc/SSHPlus/v2ray/manual_uuid.txt
+    echo "$UUID_MANUAL" > /etc/v2ray/config.json
 
     ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
         --text "✅ UUID manual guardado:\n\`\`\`\n$UUID_MANUAL\n\`\`\`" \
