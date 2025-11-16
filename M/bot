@@ -295,6 +295,7 @@ fun_criar_uuid() {
         --parse_mode markdown
 
     systemctl restart v2ray
+  }
 }
 
 fun_deluser() {
@@ -2232,6 +2233,7 @@ unset menu2
 menu2=''
 ShellBot.InlineKeyboardButton --button 'menu2' --line 1 --text 'CREAR USUARIO' --callback_data '_criaruser2'
 ShellBot.InlineKeyboardButton --button 'menu2' --line 1 --text 'CREAR TESTE' --callback_data '_criarteste2'
+ShellBot.InlineKeyboardButton --button 'menu1' --line 3 --text 'CREAR UUID V2RAY' --callback_data '_criaruuid'
 ShellBot.InlineKeyboardButton --button 'menu2' --line 2 --text 'REMOVER' --callback_data '_deluser2'
 ShellBot.InlineKeyboardButton --button 'menu2' --line 2 --text 'SUSPENDER USUARIO' --callback_data '_sususer2'
 ShellBot.InlineKeyboardButton --button 'menu2' --line 2 --text 'REMOVER SUSPENSO' --callback_data '_ativauser2'
@@ -2246,6 +2248,7 @@ ShellBot.InlineKeyboardButton --button 'menu2' --line 6 --text 'RELATORIO' --cal
 ShellBot.InlineKeyboardButton --button 'menu2' --line 6 --text 'AJUDA' --callback_data '_ajuda2'
 ShellBot.regHandleFunction --function fun_adduser --callback_data _criaruser2
 ShellBot.regHandleFunction --function fun_add_teste --callback_data _criarteste2
+ShellBot.regHandleFunction --function fun_criar_uuid --callback_data _criaruuid
 ShellBot.regHandleFunction --function fun_deluser --callback_data _deluser2
 ShellBot.regHandleFunction --function fun_sususer --callback_data _sususer2
 ShellBot.regHandleFunction --function fun_atiuser --callback_data _ativauser2
@@ -2266,6 +2269,7 @@ unset menu3
 menu3=''
 ShellBot.InlineKeyboardButton --button 'menu3' --line 1 --text 'CREAR USUARIO' --callback_data '_criaruser3'
 ShellBot.InlineKeyboardButton --button 'menu3' --line 1 --text 'CREAR TESTE' --callback_data '_criarteste3'
+ShellBot.InlineKeyboardButton --button 'menu1' --line 3 --text 'CREAR UUID V2RAY' --callback_data '_criaruuid'
 ShellBot.InlineKeyboardButton --button 'menu3' --line 2 --text 'REMOVER' --callback_data '_deluser3'
 ShellBot.InlineKeyboardButton --button 'menu3' --line 2 --text 'SUSPENDER USUARIO' --callback_data '_sususer3'
 ShellBot.InlineKeyboardButton --button 'menu3' --line 2 --text 'REMOVER SUSPENSO' --callback_data '_ativauser3'
@@ -2278,6 +2282,7 @@ ShellBot.InlineKeyboardButton --button 'menu3' --line 5 --text 'ALTERAR FECHA' -
 ShellBot.InlineKeyboardButton --button 'menu3' --line 5 --text 'AJUDA' --callback_data '_ajuda3'
 ShellBot.regHandleFunction --function fun_adduser --callback_data _criaruser3
 ShellBot.regHandleFunction --function fun_add_teste --callback_data _criarteste3
+ShellBot.regHandleFunction --function fun_criar_uuid --callback_data _criaruuid
 ShellBot.regHandleFunction --function fun_deluser --callback_data _deluser3
 ShellBot.regHandleFunction --function fun_sususer --callback_data _sususer3
 ShellBot.regHandleFunction --function fun_atiuser --callback_data _ativauser3
