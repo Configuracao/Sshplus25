@@ -569,7 +569,7 @@ alterar_limite() {
     }
     [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "Alterar Limite\n\nNome do usuario:" \
+            --text "👥 Alterar Limite 👥\n\nNome do usuario:" \
             --reply_markup "$(ShellBot.ForceReply)"
     } || {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
@@ -2502,11 +2502,11 @@ while :; do
                     'ALTERAR CONTRASEÑA ROOT')
                     alterar_senha_root
                     ;;
-                'Alterar Limite\n\nNome do usuario:')
+                (*"Nome do usuario:"*)
                     alterar_senha_root
                     [[ "$_erro" == '1' ]] && break
                     ;;
-                'Alterar Limite\n\nNome do usuario:')
+                (*"Nome do usuario:"*)
                     verifica_acesso
                     [[ "$_erro" == '1' ]] && break
                     echo $_erro segundo
