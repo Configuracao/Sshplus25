@@ -230,26 +230,17 @@ criar_user() {
 
 fun_criar_uuid() {
     local chat_id=$(ShellBot.CallbackQueryMessageChatId)
-    local message_id=$(ShellBot.CallbackQueryMessageMessageId)
     local callback_id=$(ShellBot.CallbackQueryId)
 
-    # Responder al callback para quitar el "loading..."
     ShellBot.answerCallbackQuery --callback_query_id "$callback_id"
 
-    # Teclado con opciones
-    keyboard=$(ShellBot.InlineKeyboardMarkup \
-        --button "$(ShellBot.InlineKeyboardButton --button "uuid_auto" --text "⚙️ UUID Automático" --callback_data "uuid_auto")" \
-        --button "$(ShellBot.InlineKeyboardButton --button "uuid_manual" --text "✍️ UUID Manual" --callback_data "uuid_manual")")
-
-    # Enviar mensaje
     ShellBot.sendMessage \
         --chat_id "$chat_id" \
-        --text "🔐 *CREAR UUID V2RAY*\n\nSeleccione una opción:" \
+        --text "✍️ *Ingrese el UUID manual:*" \
         --parse_mode markdown \
-        --reply_markup "$keyboard"
+        --reply_markup "$(ShellBot.ForceReply)"
 
-    # Guardar estado
-    aguardando["$chat_id"]="uuid_opcion"
+    aguardando["$chat_id"]="uuid_manual_ingreso"
 }
 
 fun_deluser() {
@@ -2338,6 +2329,23 @@ while :; do
                         --text 'Contraseña:' \
                         --reply_markup "$(ShellBot.ForceReply)" # Força a resposta.
                     ;;
+                    if [[ ${aguardando[$chat_id]} == "uuid_nombre" ]]; then
+    usuario="${message_text[$id]}"
+
+    # Generar UUID manualmente
+    uuid=$(cat /proc/sys/kernel/random/uuid)
+
+    # Guardar en el archivo del script
+    echo "User: $usuario  UUID: $uuid" >> /etc/SSHPlus/v2ray/confuuid.log
+
+    ShellBot.sendMessage --chat_id $chat_id \
+        --text "✅ UUID creado\n\n👤 Usuario: *$usuario*\n🔑 UUID: \`$uuid\`" \
+        --parse_mode markdown
+
+    unset aguardando[$chat_id]
+    continue
+fi
+                ;;
                 'Contraseña:')
                     sizepass=$(echo -e ${#message_text[$id]})
                     verifica_acesso
