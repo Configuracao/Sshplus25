@@ -229,73 +229,27 @@ criar_user() {
 }
 
 fun_criar_uuid() {
-    local chat_id=$(ShellBot.MessageChatId)
-    
-    # Pregunta Automático o Manual
-    ShellBot.sendMessage --chat_id $chat_id \
-        --text "🔐 *CREAR UUID V2RAY*\n\nSeleccione una opción:\n\n1️⃣ UUID Automático\n2️⃣ UUID Manual" \
-        --parse_mode markdown
+    local chat_id=$(ShellBot.CallbackQueryMessageChatId)
+    local message_id=$(ShellBot.CallbackQueryMessageMessageId)
+    local callback_id=$(ShellBot.CallbackQueryId)
 
-    # Esperar respuesta
-    read opc
+    # Responder al callback para quitar el "loading..."
+    ShellBot.answerCallbackQuery --callback_query_id "$callback_id"
 
-    # Si elige manual
-    if [[ "$opc" = "2" ]]; then
-        while true; do
-            ShellBot.sendMessage --chat_id $chat_id \
-                --text "✍️ Envíe el UUID manual (formato estándar XX-XX...):"
+    # Teclado con opciones
+    keyboard=$(ShellBot.InlineKeyboardMarkup \
+        --button "$(ShellBot.InlineKeyboardButton --button "uuid_auto" --text "⚙️ UUID Automático" --callback_data "uuid_auto")" \
+        --button "$(ShellBot.InlineKeyboardButton --button "uuid_manual" --text "✍️ UUID Manual" --callback_data "uuid_manual")")
 
-            read manual_uuid
+    # Enviar mensaje
+    ShellBot.sendMessage \
+        --chat_id "$chat_id" \
+        --text "🔐 *CREAR UUID V2RAY*\n\nSeleccione una opción:" \
+        --parse_mode markdown \
+        --reply_markup "$keyboard"
 
-            [[ -z "$manual_uuid" ]] && {
-                ShellBot.sendMessage --chat_id $chat_id --text "❌ El UUID no puede estar vacío."
-                continue
-            }
-
-            [[ ! "$manual_uuid" =~ ^[0-9a-fA-F-]{36}$ ]] && {
-                ShellBot.sendMessage --chat_id $chat_id --text "❌ Formato inválido. Debe ser un UUID válido."
-                continue
-            }
-
-            UUID="$manual_uuid"
-            break
-        done
-
-    else
-        UUID=$(uuidgen)
-    fi
-
-    # Generar correo
-    MAILITO=$(cat /dev/urandom | tr -dc '[:alnum:]' | head -c 10)
-
-    # Insertar en config.json
-    sed -i '13i\           \{' /etc/v2ray/config.json
-    sed -i '14i\           \"alterId": 0,' /etc/v2ray/config.json
-    sed -i '15i\           \"id": "'$UUID'",' /etc/v2ray/config.json
-    sed -i '16i\           \"email": "'$MAILITO'@gmail.com"' /etc/v2ray/config.json
-    sed -i '17i\           \},' /etc/v2ray/config.json
-
-    # Pedir nombre de usuario
-    ShellBot.sendMessage --chat_id $chat_id --text "👤 Digite un nombre de usuario para esta UUID:"
-    read nick
-
-    # Pedir duración
-    ShellBot.sendMessage --chat_id $chat_id --text "⏳ Digite la duración del UUID (en días):"
-    read diasuser
-
-    # Calcular fecha
-    valid=$(date '+%C%y-%m-%d' -d " +$diasuser days")
-
-    # Guardar en archivo (logs)
-    echo "Usuario: $nick | UUID: $UUID | Expira: $valid" >> /etc/SSHPlus/v2ray/confuuid.log
-
-    # Respuesta final
-    ShellBot.sendMessage --chat_id $chat_id \
-        --text "✅ *UUID V2RAY CREADA*\n\n👤 Usuario: *$nick*\n🔑 UUID:\n\`$UUID\`\n📅 Expira: *$valid*\n📧 Email: $MAILITO@gmail.com" \
-        --parse_mode markdown
-
-    systemctl restart v2ray
-  }
+    # Guardar estado
+    aguardando["$chat_id"]="uuid_opcion"
 }
 
 fun_deluser() {
@@ -2233,7 +2187,6 @@ unset menu2
 menu2=''
 ShellBot.InlineKeyboardButton --button 'menu2' --line 1 --text 'CREAR USUARIO' --callback_data '_criaruser2'
 ShellBot.InlineKeyboardButton --button 'menu2' --line 1 --text 'CREAR TESTE' --callback_data '_criarteste2'
-ShellBot.InlineKeyboardButton --button 'menu1' --line 3 --text 'CREAR UUID V2RAY' --callback_data '_criaruuid'
 ShellBot.InlineKeyboardButton --button 'menu2' --line 2 --text 'REMOVER' --callback_data '_deluser2'
 ShellBot.InlineKeyboardButton --button 'menu2' --line 2 --text 'SUSPENDER USUARIO' --callback_data '_sususer2'
 ShellBot.InlineKeyboardButton --button 'menu2' --line 2 --text 'REMOVER SUSPENSO' --callback_data '_ativauser2'
@@ -2248,7 +2201,6 @@ ShellBot.InlineKeyboardButton --button 'menu2' --line 6 --text 'RELATORIO' --cal
 ShellBot.InlineKeyboardButton --button 'menu2' --line 6 --text 'AJUDA' --callback_data '_ajuda2'
 ShellBot.regHandleFunction --function fun_adduser --callback_data _criaruser2
 ShellBot.regHandleFunction --function fun_add_teste --callback_data _criarteste2
-ShellBot.regHandleFunction --function fun_criar_uuid --callback_data _criaruuid
 ShellBot.regHandleFunction --function fun_deluser --callback_data _deluser2
 ShellBot.regHandleFunction --function fun_sususer --callback_data _sususer2
 ShellBot.regHandleFunction --function fun_atiuser --callback_data _ativauser2
@@ -2269,7 +2221,6 @@ unset menu3
 menu3=''
 ShellBot.InlineKeyboardButton --button 'menu3' --line 1 --text 'CREAR USUARIO' --callback_data '_criaruser3'
 ShellBot.InlineKeyboardButton --button 'menu3' --line 1 --text 'CREAR TESTE' --callback_data '_criarteste3'
-ShellBot.InlineKeyboardButton --button 'menu1' --line 3 --text 'CREAR UUID V2RAY' --callback_data '_criaruuid'
 ShellBot.InlineKeyboardButton --button 'menu3' --line 2 --text 'REMOVER' --callback_data '_deluser3'
 ShellBot.InlineKeyboardButton --button 'menu3' --line 2 --text 'SUSPENDER USUARIO' --callback_data '_sususer3'
 ShellBot.InlineKeyboardButton --button 'menu3' --line 2 --text 'REMOVER SUSPENSO' --callback_data '_ativauser3'
@@ -2282,7 +2233,6 @@ ShellBot.InlineKeyboardButton --button 'menu3' --line 5 --text 'ALTERAR FECHA' -
 ShellBot.InlineKeyboardButton --button 'menu3' --line 5 --text 'AJUDA' --callback_data '_ajuda3'
 ShellBot.regHandleFunction --function fun_adduser --callback_data _criaruser3
 ShellBot.regHandleFunction --function fun_add_teste --callback_data _criarteste3
-ShellBot.regHandleFunction --function fun_criar_uuid --callback_data _criaruuid
 ShellBot.regHandleFunction --function fun_deluser --callback_data _deluser3
 ShellBot.regHandleFunction --function fun_sususer --callback_data _sususer3
 ShellBot.regHandleFunction --function fun_atiuser --callback_data _ativauser3
