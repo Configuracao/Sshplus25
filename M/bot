@@ -488,7 +488,7 @@ alterar_senha() {
     }
     [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "🔐 Alterar Senha 🔐\n\nNome do usuario:" \
+            --text "🔐 Cambiar Contraseña 🔐\n\nNome do usuario:" \
             --reply_markup "$(ShellBot.ForceReply)"
     } || {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
@@ -2467,7 +2467,7 @@ while :; do
                         --text "✅ *Usuario ativado com sucesso.* 🚮" \
                         --parse_mode markdown
                     ;;
-                '🔐 Alterar Senha 🔐\n\nNome do usuario:')
+                '🔐 Cambiar Contraseña 🔐\n\nNome do usuario:')
                     verifica_acesso
                     [[ "$_erro" == '1' ]] && break
                     fun_verif_user ${message_text[$id]}
