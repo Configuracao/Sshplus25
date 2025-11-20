@@ -3,65 +3,55 @@ clear
 [[ ! -d /etc/SSHPlus ]] && exit 0
 [[ ! -d /etc/bot ]] && exit 0
 source ShellBot.sh
-# api_bot es el primer argumento
 api_bot=$1
-# id_admin es el segundo argumento
 id_admin=$2
 [[ -z $api_bot ]] && exit 0
 [[ -z $id_admin ]] && exit 0
 [[ ! -e /usr/lib/licence ]] && exit 0
-# Lista de usuarios activos
 ativos='/etc/bot/lista_ativos'
-# Lista de usuarios suspendidos
 suspensos='/etc/bot/lista_suspensos'
 ShellBot.init --token "$api_bot" --monitor --return map --flush
 ShellBot.username
-
 fun_menu() {
-    # Si el remitente es el administrador
     [[ "${message_from_id[$id]}" == "$id_admin" ]] && {
         local env_msg
         env_msg="=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=\n"
         env_msg+="<b>🤖 BIENVENIDO(a) AL BOT HIRVIP HB 🤖</b>\n"
         env_msg+="=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n"
-        env_msg+="⚠️ <i>SELECCIONE UNA OPCIÓN ABAJO !</i>\n\n"
+        env_msg+="⚠️ <i>SELECIONE UNA OPCIÓN ABAJO !</i>\n\n"
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$env_msg" \
             --reply_markup "$keyboard1" \
             --parse_mode html
         return 0
     }
-    # Si el usuario está suspendido
     [[ -d /etc/bot/suspensos/${message_from_username} ]] && {
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e "🚫 ESTÁS SUSPENDIDO 🚫\n\nCONTACTA AL ADMINISTRADOR")"
+            --text "$(echo -e "🚫 VC ESTA SUSPENSO 🚫\n\nCONTATE O ADMINISTRADOR")"
         return 0
     }
-    # Si el usuario es revendedor
     if [[ "$(grep -w "${message_from_username}" $ativos | grep -wc 'revenda')" != '0' ]]; then
         local env_msg
         env_msg="=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=\n"
         env_msg+="<b>🤖 BIENVENIDO(a) AL BOT HIRVIP HB 🤖</b>\n"
         env_msg+="=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n"
-        env_msg+="⚠️ <i>SELECCIONE UNA OPCIÓN ABAJO !</i>\n\n"
+        env_msg+="⚠️ <i>SELECIONE UNA OPCIÓN ABAJO !</i>\n\n"
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$env_msg" \
             --reply_markup "$keyboard2" \
             --parse_mode html
         return 0
-    # Si el usuario es subrevendedor
     elif [[ "$(grep -w "${message_from_username}" $ativos | grep -wc 'subrevenda')" != '0' ]]; then
         local env_msg
         env_msg="=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=\n"
         env_msg+="<b>🤖 BIENVENIDO(a) AL BOT HIRVIP HB 🤖</b>\n"
         env_msg+="=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n"
-        env_msg+="⚠️ <i>SELECCIONE UNA OPCIÓN ABAJO !</i>\n\n"
+        env_msg+="⚠️ <i>SELECIONE UNA OPCIÓN ABAJO !</i>\n\n"
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$env_msg" \
             --reply_markup "$keyboard3" \
             --parse_mode html
         return 0
-    # Acceso denegado
     else
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e 🚫 ACCESO DENEGADO 🚫)"
+            --text "$(echo -e 🚫 ACESSO NEGADO 🚫)"
         return 0
     fi
 }
@@ -74,111 +64,104 @@ fun_ajuda() {
         id_chatuser="${message_chat_id[$id]}"
         id_name="${message_from_username}"
     }
-    # Si es el administrador
     if [[ "$id_chatuser" = "$id_admin" ]]; then
         local env_msg
         env_msg="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n"
-        env_msg+="<b>🤖 BIENVENIDO(a) AL BOT HIRVIP HB 🤖</b>\n"
+        env_msg+="<b>🤖  BIENVENIDO(a) AL BOT HIRVIP HB 🤖</b>\n"
         env_msg+="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n"
-        env_msg+="⚠️ <i>Comandos Disponibles</i>\n\n"
-        env_msg+="[<b>01</b>] /menu = Muestra el menú\n"
-        env_msg+="[<b>02</b>] /info = Muestra información\n"
-        env_msg+="[<b>03</b>] /ajuda = Información sobre opciones\n\n"
-        env_msg+="⚠️ <i>Opciones Disponibles</i>\n\n"
-        env_msg+="• <u>CREAR USUARIO</u> = Crea usuario ssh\n\n"
-        env_msg+="• <u>CREAR TEST</u> = Crea test ssh\n\n"
-        env_msg+="• <u>REMOVER</u> = Elimina usuario ssh\n\n"
+        env_msg+="⚠️ <i>Comandos Disponiveis</i>\n\n"
+        env_msg+="[<b>01</b>] /menu = Exibe menu\n"
+        env_msg+="[<b>02</b>] /info = Exibe informacoes\n"
+        env_msg+="[<b>03</b>] /ajuda = Informacoes sobre opcoes\n\n"
+        env_msg+="⚠️ <i>Opções Disponiveis</i>\n\n"
+        env_msg+="• <u>CREAR USUARIO</u> = Cria usuario ssh\n\n"
+        env_msg+="• <u>CREAR TESTE</u> = Cria teste ssh\n\n"
+        env_msg+="• <u>REMOVER</u> = Remove usuario ssh\n\n"
         env_msg+="• <u>SUSPENDER</u> = Suspender usuario ssh\n\n"
-        env_msg+="• <u>INFO USUARIOS</u> = Información del usuario\n\n"
-        env_msg+="• <u>USUARIOS ONLINE</u> = Muestra Usuarios en línea\n\n"
-        env_msg+="• <u>INFO VPS</u> = Información del servidor\n\n"
-        env_msg+="• <u>CAMBIAR CONTRASEÑA</u> = Cambia contraseña ssh\n\n"
-        env_msg+="• <u>CAMBIAR LÍMITE</u> = Cambia límite ssh\n\n"
-        env_msg+="• <u>CAMBIAR FECHA</u> = Cambia fecha ssh\n\n"
-        env_msg+="• <u>EXPIRADOS</u> = Elimina ssh expirados\n\n"
-        env_msg+="• <u>BACKUP</u> = Crea Backup ssh y revendedores\n\n"
-        env_msg+="• <u>OPTIMIZAR</u> = Limpia la caché - ram\n\n"
-        env_msg+="• <u>SPEEDTEST</u> = Prueba de conexión\n\n"
-        env_msg+="• <u>ARCHIVOS</u> = Aloja Archivos\n\n"
-        env_msg+="• <u>REVENDEDORES</u> = Administrar Revendedores\n\n"
-        env_msg+="• <u>AUTOBACKUP</u> = Act/Des Backup automático\n\n"
-        env_msg+="• <u>REPORTE</u> = Información sobre revendedores\n\n"
-        env_msg+="• <u>AYUDA</u> = Información sobre opciones\n\n"
+        env_msg+="• <u>INFO USUARIOS</u> = Informacoes do usuario\n\n"
+        env_msg+="• <u>USUARIOS ONLINE</u> = Exibe Usuários onlines\n\n"
+        env_msg+="• <u>INFO VPS</u> = Informacoes do servidor\n\n"
+        env_msg+="• <u>ALTERAR CONTRASEÑA</u> = Altera senha ssh\n\n"
+        env_msg+="• <u>ALTERAR LIMITE</u> = Altera limite ssh\n\n"
+        env_msg+="• <u>ALTERAR FECHA</u> = Altera data ssh\n\n"
+        env_msg+="• <u>EXPIRADOS</u> = Remove ssh expirados\n\n"
+        env_msg+="• <u>BACKUP</u> = Cria Backup ssh e revendas\n\n"
+        env_msg+="• <u>OTIMIZAR</u> = Limpa o cache - ram\n\n"
+        env_msg+="• <u>SPEEDTESTE</u> = Teste de conexao\n\n"
+        env_msg+="• <u>ARQUIVOS</u> = Hospeda Arquivos\n\n"
+        env_msg+="• <u>REVENDAS</u> = Gerenciar Revendas\n\n"
+        env_msg+="• <u>AUTOBACKUP</u> = lig/Des Backup automatico\n\n"
+        env_msg+="• <u>RELATORIO</u> = Informacoes sobre revendas\n\n"
+        env_msg+="• <u>AJUDA</u> = Informacoes sobre opcoes\n\n"
         ShellBot.sendMessage --chat_id $id_chatuser \
             --text "$(echo -e $env_msg)" \
             --parse_mode html
         return 0
-    # Si el usuario está suspendido
     elif [[ -d /etc/bot/suspensos/$id_name ]]; then
         ShellBot.sendMessage --chat_id $id_chatuser \
-            --text "$(echo -e "🚫 ESTÁS SUSPENDIDO 🚫\n\nCONTACTA AL ADMINISTRADOR")"
+            --text "$(echo -e "🚫 VC ESTA SUSPENSO 🚫\n\nCONTATE O ADMINISTRADOR")"
         return 0
-    # Si el usuario es revendedor
     elif [[ "$(grep -w "$id_name" $ativos | awk '{print $NF}')" == 'revenda' ]]; then
         local env_msg
         env_msg="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n"
-        env_msg+="<b>🤖 BIENVENIDO(a) AL BOT HIRVIP HB 🤖</b>\n"
+        env_msg+="<b>🤖  BIENVENIDO(a) AL BOT HIRVIP HB 🤖</b>\n"
         env_msg+="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n"
-        env_msg+="⚠️ <i>Comandos Disponibles</i>\n\n"
-        env_msg+="[<b>01</b>] /menu = Muestra el menú\n"
-        env_msg+="[<b>02</b>] /info = Muestra información\n"
-        env_msg+="[<b>03</b>] /ajuda = Información sobre opciones\n\n"
-        env_msg+="⚠️ <i>Opciones Disponibles</i>\n\n"
-        env_msg+="• <u>CREAR USUARIO</u> = Crea usuario ssh\n\n"
-        env_msg+="• <u>CREAR TEST</u> = Crea test ssh\n\n"
-        env_msg+="• <u>REMOVER</u> = Elimina usuario ssh\n\n"
+        env_msg+="⚠️ <i>Comandos Disponiveis</i>\n\n"
+        env_msg+="[<b>01</b>] /menu = Exibe menu\n"
+        env_msg+="[<b>02</b>] /info = Exibe informacoes\n"
+        env_msg+="[<b>03</b>] /ajuda = Informacoes sobre opcoes\n\n"
+        env_msg+="⚠️ <i>Opções Disponiveis</i>\n\n"
+        env_msg+="• <u>CREAR USUARIO</u> = Cria usuario ssh\n\n"
+        env_msg+="• <u>CREAR TESTE</u> = Cria teste ssh\n\n"
+        env_msg+="• <u>REMOVER</u> = Remove usuario ssh\n\n"
         env_msg+="• <u>SUSPENDER</u> = Suspender usuario ssh\n\n"
-        env_msg+="• <u>INFO USUARIOS</u> = Información del usuario\n\n"
-        env_msg+="• <u>USUARIOS ONLINE</u> = Muestra Usuarios en línea\n\n"
-        env_msg+="• <u>CAMBIAR CONTRASEÑA</u> = Cambia contraseña ssh\n\n"
-        env_msg+="• <u>CAMBIAR LÍMITE</u> = Cambia límite ssh\n\n"
-        env_msg+="• <u>CAMBIAR FECHA</u> = Cambia fecha ssh\n\n"
-        env_msg+="• <u>EXPIRADOS</u> = Elimina ssh expirados\n\n"
-        env_msg+="• <u>REVENDEDORES</u> = Administrar Revendedores\n\n"
-        env_msg+="• <u>REPORTE</u> = Información sobre revendedores\n\n"
-        env_msg+="• <u>AYUDA</u> = Información sobre opciones\n\n"
+        env_msg+="• <u>INFO USUARIOS</u> = Informacoes do usuario\n\n"
+        env_msg+="• <u>USUARIOS ONLINE</u> = Exibe Usuários onlines\n\n"
+        env_msg+="• <u>ALTERAR CONTRASEÑA</u> = Altera senha ssh\n\n"
+        env_msg+="• <u>ALTERAR LIMITE</u> = Altera limite ssh\n\n"
+        env_msg+="• <u>ALTERAR FECHA</u> = Altera data ssh\n\n"
+        env_msg+="• <u>EXPIRADOS</u> = Remove ssh expirados\n\n"
+        env_msg+="• <u>REVENDAS</u> = Gerenciar Revendas\n\n"
+        env_msg+="• <u>RELATORIO</u> = Informacoes sobre revendas\n\n"
+        env_msg+="• <u>AJUDA</u> = Informacoes sobre opcoes\n\n"
         ShellBot.sendMessage --chat_id $id_chatuser \
             --text "$(echo -e $env_msg)" \
             --parse_mode html
         return 0
-    # Si el usuario es subrevendedor
     elif [[ "$(grep -w "$id_name" $ativos | awk '{print $NF}')" == 'subrevenda' ]]; then
         local env_msg
         env_msg="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n"
-        env_msg+="<b>🤖 BIENVENIDO(a) AL BOT HIRVIP HB 🤖</b>\n"
+        env_msg+="<b>🤖  BIENVENIDO(a) AL BOT HIRVIP HB 🤖</b>\n"
         env_msg+="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n"
-        env_msg+="⚠️ <i>Comandos Disponibles</i>\n\n"
-        env_msg+="[<b>01</b>] /menu = Muestra el menú\n"
-        env_msg+="[<b>02</b>] /info = Muestra información\n"
-        env_msg+="[<b>03</b>] /ajuda = Información sobre opciones\n\n"
-        env_msg+="⚠️ <i>Opciones Disponibles</i>\n\n"
-        env_msg+="• <u>CREAR USUARIO</u> = Crea usuario ssh\n\n"
-        env_msg+="• <u>CREAR TEST</u> = Crea test ssh\n\n"
-        env_msg+="• <u>REMOVER</u> = Elimina usuario ssh\n\n"
+        env_msg+="⚠️ <i>Comandos Disponiveis</i>\n\n"
+        env_msg+="[<b>01</b>] /menu = Exibe menu\n"
+        env_msg+="[<b>02</b>] /info = Exibe informacoes\n"
+        env_msg+="[<b>03</b>] /ajuda = Informacoes sobre opcoes\n\n"
+        env_msg+="⚠️ <i>Opções Disponiveis</i>\n\n"
+        env_msg+="• <u>CREAR USUARIO</u> = Cria usuario ssh\n\n"
+        env_msg+="• <u>CREAR TESTE</u> = Cria teste ssh\n\n"
+        env_msg+="• <u>REMOVER</u> = Remove usuario ssh\n\n"
         env_msg+="• <u>SUSPENDER</u> = Suspender usuario ssh\n\n"
-        env_msg+="• <u>INFO USUARIOS</u> = Información del usuario\n\n"
-        env_msg+="• <u>USUARIOS ONLINE</u> = Muestra Usuarios en línea\n\n"
-        env_msg+="• <u>CAMBIAR CONTRASEÑA</u> = Cambia contraseña ssh\n\n"
-        env_msg+="• <u>CAMBIAR LÍMITE</u> = Cambia límite ssh\n\n"
-        env_msg+="• <u>CAMBIAR FECHA</u> = Cambia fecha ssh\n\n"
-        env_msg+="• <u>EXPIRADOS</u> = Elimina ssh expirados\n\n"
-        env_msg+="• <u>AYUDA</u> = Información sobre opciones\n\n"
+        env_msg+="• <u>INFO USUARIOS</u> = Informacoes do usuario\n\n"
+        env_msg+="• <u>USUARIOS ONLINE</u> = Exibe Usuários onlines\n\n"
+        env_msg+="• <u>ALTERAR CONTRASEÑA</u> = Altera senha ssh\n\n"
+        env_msg+="• <u>ALTERAR LIMITE</u> = Altera limite ssh\n\n"
+        env_msg+="• <u>ALTERAR FECHA</u> = Altera data ssh\n\n"
+        env_msg+="• <u>EXPIRADOS</u> = Remove ssh expirados\n\n"
+        env_msg+="• <u>AJUDA</u> = Informacoes sobre opcoes\n\n"
         ShellBot.sendMessage --chat_id $id_chatuser \
             --text "$(echo -e $env_msg)" \
             --parse_mode html
         return 0
-    # Acceso denegado
     else
         ShellBot.sendMessage --chat_id $id_chatuser \
-            --text "$(echo -e 🚫 ACCESO DENEGADO 🚫)"
+            --text "$(echo -e 🚫 ACESSO NEGADO 🚫)"
         return 0
     fi
 }
 
-# Función para verificar el acceso (traducido solo comentarios, lógica original)
 verifica_acesso() {
     [[ "${message_from_id[$id]}" != "$id_admin" ]] && {
-        # Si el usuario está suspendido o no está activo, establece la variable de error.
         [[ "$(grep -wc ${message_from_username} $suspensos)" != '0' ]] || [[ "$(grep -wc ${message_from_username} $ativos)" == '0' ]] && {
             _erro="1"
             return 0
@@ -187,28 +170,24 @@ verifica_acesso() {
 }
 
 fun_adduser() {
-    # Si el usuario está suspendido
     [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "⚠️ ¡ESTÁS SUSPENDIDO! CONTACTA AL ADMINISTRADOR"
+            --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
         return 0
     }
-    # Si es el administrador o un usuario activo
     [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "👤 CREAR USUARIO 👤\n\nNombre del usuario:" \
+            --text "👤 CREAR USUARIO 👤\n\nNome do usuario:" \
             --reply_markup "$(ShellBot.ForceReply)"
     } || {
-        # Acceso denegado
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "🚫 ACCESO DENEGADO 🚫"
+            --text "🚫 ACESSO NEGADO 🚫"
         return 0
     }
 }
 
 criar_user() {
     IP=$(cat /etc/IP)
-    # Función auxiliar para crear el archivo .ovpn
     newclient() {
         cp /etc/openvpn/client-common.txt ~/$1.ovpn
         echo "<ca>" >>~/$1.ovpn
@@ -229,26 +208,19 @@ criar_user() {
     senha=$(sed -n '2 p' $file_user | cut -d' ' -f2)
     limite=$(sed -n '3 p' $file_user | cut -d' ' -f2)
     data=$(sed -n '4 p' $file_user | cut -d' ' -f2)
-    # Convierte la fecha de DD/MM/AAAA a AAAA/MM/DD para el comando useradd
     validade=$(echo "$data" | awk -F'/' '{print $2FS$1FS$3}' | xargs -i date -d'{}' +%Y/%m/%d)
 
-    # Crea el usuario SSH con fecha de expiración
     useradd -M -N -s /bin/false $usuario -e $validade >/dev/null 2>&1
-    # Asigna la contraseña
     (
         echo "${senha}"
         echo "${senha}"
     ) | passwd "${usuario}" >/dev/null 2>&1
-    # Si NO es el administrador, guarda la información para el revendedor
     [[ "${message_from_id[$id]}" != "$id_admin" ]] && {
         echo "$usuario:$senha:$info_data:$limite" >/etc/bot/revenda/${message_from_username}/usuarios/$usuario
         echo "$usuario:$senha:$info_data:$limite" >/etc/bot/info-users/$usuario
     }
-    # Guarda el usuario y límite en la base de datos de usuarios
     echo "$usuario $limite" >>/root/usuarios.db
-    # Guarda la contraseña
     echo "$senha" >/etc/SSHPlus/senha/$usuario
-    # Si OpenVPN está configurado, crea los certificados y el archivo .ovpn
     [[ -e "/etc/openvpn/server.conf" ]] && {
         cd /etc/openvpn/easy-rsa/
         ./easyrsa build-client-full $usuario nopass
@@ -257,30 +229,25 @@ criar_user() {
 }
 
 fun_deluser() {
-    # Si el usuario está suspendido
     [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "⚠️ ¡ESTÁS SUSPENDIDO! CONTACTA AL ADMINISTRADOR"
+            --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
         return 0
     }
-    # Si es el administrador o un usuario activo
     [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "🗑 ELIMINAR USUARIO 🗑\n\nNombre del usuario:" \
+            --text "🗑 REMOVER USUARIO 🗑\n\nNome do usuario:" \
             --reply_markup "$(ShellBot.ForceReply)"
     } || {
-        # Acceso denegado
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "🚫 ACCESO DENEGADO 🚫"
+            --text "🚫 ACESSO NEGADO 🚫"
         return 0
     }
 }
 
 fun_del_user() {
     usuario=$1
-    # Si es el administrador
     [[ "${message_from_id[$id]}" = "$id_admin" ]] && {
-        # Lógica de eliminación para el administrador (elimina de todo el sistema)
         piduser=$(ps -u "$usuario" | grep sshd | cut -d? -f1)
         kill -9 $piduser >/dev/null 2>&1
         userdel --force "$usuario" 2>/dev/null
@@ -288,15 +255,13 @@ fun_del_user() {
         cat /tmp/ph >/root/usuarios.db
         rm /etc/SSHPlus/senha/$usuario >/dev/null 2>&1
     } || {
-        # Si NO es el administrador, comprueba si el usuario existe bajo su revendedor
         [[ ! -e /etc/bot/revenda/${message_from_username}/usuarios/$usuario ]] && {
             ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-                --text "$(echo -e "❌ EL USUARIO NO EXISTE ❌")" \
+                --text "$(echo -e "❌ O USUARIO NAO EXISTE ❌")" \
                 --parse_mode html
             _erro='1'
             return 0
         }
-        # Lógica de eliminación para el revendedor (elimina del sistema y de los archivos del revendedor)
         piduser=$(ps -u "$usuario" | grep sshd | cut -d? -f1)
         kill -9 $piduser >/dev/null 2>&1
         userdel --force "$usuario" 2>/dev/null
@@ -306,9 +271,7 @@ fun_del_user() {
         rm /etc/bot/revenda/${message_from_username}/usuarios/$usuario
         rm /etc/bot/info-users/$usuario
     }
-    # Elimina el script de usuario de prueba si existe
     [[ -e /etc/SSHPlus/userteste/$usuario.sh ]] && rm /etc/SSHPlus/userteste/$usuario.sh
-    # Si OpenVPN está configurado, revoca el certificado
     [[ -e "/etc/openvpn/easy-rsa/pki/private/$usuario.key" ]] && {
         [[ -e /etc/debian_version ]] && GROUPNAME=nogroup
         cd /etc/openvpn/easy-rsa/
@@ -325,42 +288,34 @@ fun_del_user() {
 }
 
 fun_sususer() {
-    # Si es el administrador
     if [[ "${callback_query_from_id[$id]}" == "$id_admin" ]]; then
         arq_info=/tmp/$(echo $RANDOM)
         local info_users
         info_users='=×=×=×=×=×=×=×=×=×=×=×=×=×=\n'
         info_users+='<b>INFORMACIÓN DE USUARIOS</b>\n'
         info_users+='=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n'
-        info_users+='⚠️ Muestra en el formato de abajo:\n\n'
-        info_users+='<code>USUARIO CONTRASEÑA LÍMITE FECHA</code>\n'
+        info_users+='⚠️ Exibe no formato abaixo:\n\n'
+        info_users+='<code>USUÁRIO CONTRASEÑA LIMITE FECHA</code>\n'
         ShellBot.sendMessage --chat_id $id_admin \
             --text "$(echo -e $info_users)" \
             --parse_mode html
-        # Función interna para obtener la información de todos los usuarios
         fun_infu() {
             local info
-            # Itera sobre todos los usuarios del sistema
             for user in $(cat /etc/passwd | awk -F : '$3 >= 1000 {print $1}' | grep -v nobody); do
                 info='===========================\n'
-                # Obtiene contraseña
                 [[ -e /etc/SSHPlus/senha/$user ]] && senha=$(cat /etc/SSHPlus/senha/$user) || senha='Null'
-                # Obtiene límite
                 [[ $(grep -wc $user $HOME/usuarios.db) != '0' ]] && limite=$(grep -w $user $HOME/usuarios.db | cut -d' ' -f2) || limite='Null'
-                # Obtiene la fecha de expiración
                 datauser=$(chage -l $user | grep -i co | awk -F : '{print $2}')
                 [[ $datauser = ' never' ]] && {
                     data="00/00/00"
                 } || {
-                    # Compara si ya expiró (formato AAAA/MM/DD)
                     databr="$(date -d "$datauser" +"%Y%m%d")"
                     hoje="$(date -d today +"%Y%m%d")"
                     [[ $hoje -ge $databr ]] && {
-                        data="Vencido"
+                        data="Venceu"
                     } || {
-                        # Calcula los días restantes
                         dat="$(date -d"$datauser" '+%Y-%m-%d')"
-                        data=$(echo -e "$((($(date -ud $dat +%s) - $(date -ud $(date +%Y-%m-%d) +%s)) / 86400)) DÍAS")
+                        data=$(echo -e "$((($(date -ud $dat +%s) - $(date -ud $(date +%Y-%m-%d) +%s)) / 86400)) DIAS")
                     }
                 }
                 info+="$user • $senha • $limite • $data"
@@ -368,32 +323,26 @@ fun_sususer() {
             done
         }
         fun_infu >$arq_info
-        # Envía la información al administrador en bloques de 30 líneas
         while :; do
             ShellBot.sendMessage --chat_id $id_admin \
                 --text "$(while read linha; do echo $linha; done < <(sed '1,30!d' $arq_info))" \
                 --parse_mode html
             sed -i 1,30d $arq_info
-            # Sale del bucle cuando no quedan más líneas
             [[ $(cat $arq_info | wc -l) = '0' ]] && rm $arq_info && break
         done
-        # Solicita el usuario a suspender
         ShellBot.sendMessage --chat_id $id_admin \
-            --text "🗑 SUSPENDER USUARIO 🗑\n\nNombre del usuario:" \
+            --text "🗑 SUSPENDER USUARIO 🗑\n\nNome do usuario:" \
             --reply_markup "$(ShellBot.ForceReply)"
         ShellBot.addHandler --function_call fun_sus_user --callback_data "suspend_user"
-    # Si es un revendedor activo
     elif [[ "$(grep -wc "${callback_query_from_username}" $ativos)" != '0' ]]; then
-        # Si el revendedor está suspendido (debería ser redundante, pero el script lo tiene)
         [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
             ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-                --text "⚠️ ¡ESTÁS SUSPENDIDO! CONTACTA AL ADMINISTRADOR"
+                --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
             return 0
         }
-        # Comprueba si el revendedor tiene usuarios creados
         [[ $(ls /etc/bot/revenda/${callback_query_from_username}/usuarios | wc -l) == '0' ]] && {
             ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-                --text "¡AÚN NO HAS CREADO NINGÚN USUARIO!"
+                --text "VC AINDA NAO CRIOU USUARIO!"
             return 0
         }
         arq_info=/tmp/$(echo $RANDOM)
@@ -401,35 +350,28 @@ fun_sususer() {
         info_users='=×=×=×=×=×=×=×=×=×=×=×=×=×=\n'
         info_users+='<b>INFORMACIÓN DE USUARIOS</b>\n'
         info_users+='=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n'
-        info_users+='⚠️ Muestra en el formato de abajo:\n\n'
-        info_users+='<code>USUARIO CONTRASEÑA LÍMITE FECHA</code>\n'
+        info_users+='⚠️ Exibe no formato abaixo:\n\n'
+        info_users+='<code>USUÁRIO CONTRASEÑA LIMITE FECHA</code>\n'
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
             --text "$(echo -e $info_users)" \
             --parse_mode html
-        # Función interna para obtener la información de los usuarios del revendedor
         fun_infu() {
             local info
-            # Itera sobre los usuarios creados por este revendedor
             for user in $(ls /etc/bot/revenda/${callback_query_from_username}/usuarios); do
                 info='===========================\n'
-                # Obtiene contraseña
                 [[ -e /etc/SSHPlus/senha/$user ]] && senha=$(cat /etc/SSHPlus/senha/$user) || senha='Null'
-                # Obtiene límite
                 [[ $(grep -wc $user $HOME/usuarios.db) != '0' ]] && limite=$(grep -w $user $HOME/usuarios.db | cut -d' ' -f2) || limite='Null'
-                # Obtiene la fecha de expiración
                 datauser=$(chage -l $user | grep -i co | awk -F : '{print $2}')
                 [[ $datauser = ' never' ]] && {
                     data="00/00/00"
                 } || {
-                    # Compara si ya expiró (formato AAAA/MM/DD)
                     databr="$(date -d "$datauser" +"%Y%m%d")"
                     hoje="$(date -d today +"%Y%m%d")"
                     [[ $hoje -ge $databr ]] && {
-                        data="Vencido"
+                        data="Venceu"
                     } || {
-                        # Calcula los días restantes
                         dat="$(date -d"$datauser" '+%Y-%m-%d')"
-                        data=$(echo -e "$((($(date -ud $dat +%s) - $(date -ud $(date +%Y-%m-%d) +%s)) / 86400)) DÍAS")
+                        data=$(echo -e "$((($(date -ud $dat +%s) - $(date -ud $(date +%Y-%m-%d) +%s)) / 86400)) DIAS")
                     }
                 }
                 info+="$user • $senha • $limite • $data"
@@ -437,7 +379,6 @@ fun_sususer() {
             done
         }
         fun_infu >$arq_info
-        # Envía la información al revendedor en bloques de 30 líneas
         while :; do
             ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
                 --text "$(while read linha; do echo $linha; done < <(sed '1,30!d' $arq_info))" \
@@ -445,43 +386,42 @@ fun_sususer() {
             sed -i 1,30d $arq_info
             [[ $(cat $arq_info | wc -l) = '0' ]] && rm $arq_info && break
         done
-        # Solicita el usuario a suspender
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "🗑 SUSPENDER USUARIO 🗑\n\nNombre del usuario:" \
+            --text "🗑 SUSPENDER USUARIO 🗑\n\nNome do usuario:" \
             --reply_markup "$(ShellBot.ForceReply)"
         ShellBot.addHandler --function_call fun_sus_user --callback_data "suspend_user"
-    # Acceso denegado
     else
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "$(echo -e 🚫 ACCESO DENEGADO 🚫)"
+            --text "$(echo -e 🚫 ACESSO NEGADO 🚫)"
         return 0
     fi
 }
 
 fun_sus_user() {
-    lock=$1  # Captura el nombre del usuario pasado como argumento en la variable lock
+    lock=$1  # Captura o nome do usuário passado como argumento na variável lock
     if [[ "${message_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc "${callback_query_from_username}" $ativos)" != '0' ]]; then
-        if id "$lock" &>/dev/null; then  # Verifica si el usuario existe
-            passwd -l "$lock"  # Suspendiendo el usuario usando la variable lock
+        if id "$lock" &>/dev/null; then  # Verifica se o usuário existe
+            passwd -l "$lock"  # Suspendendo o usuário usando a variável lock
             ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-                --text "$(echo -e "✅ USUARIO $lock SUSPENDIDO CON ÉXITO ✅")" \
+                --text "$(echo -e "✅ USUARIO $lock SUSPENSO COM SUCESSO ✅")" \
                 --parse_mode html
             
-            # Agrega el usuario al archivo usuarios_suspensos
+            # Adiciona o usuário ao arquivo usuarios_suspensos
             echo "$lock" >> /etc/bot/usuarios_suspensos
-            # Asegúrate de que el archivo exista
+            # Certifique-se de que o arquivo existe
             touch /etc/bot/usuarios_suspensos
 
         else
             ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-                --text "$(echo -e "❌ EL USUARIO NO EXISTE ❌")" \
+                --text "$(echo -e "❌ O USUARIO NAO EXISTE ❌")" \
                 --parse_mode html
         fi
     else
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "🚫 ACCESO DENEGADO 🚫"
+            --text "🚫 ACESSO NEGADO 🚫"
     fi
 }
+
 
 
 fun_atiuser() {
@@ -489,7 +429,7 @@ fun_atiuser() {
         arq_info=/tmp/$(echo $RANDOM)
         local info_users
         info_users='=×=×=×=×=×=×=×=×=×=×=×=×=×=\n'
-        info_users+='<b>USUARIOS SUSPENDIDOS</b>\n'
+        info_users+='<b>USUÁRIOS SUSPENSOS</b>\n'
         info_users+='=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n'
 
         while read user; do
@@ -501,61 +441,58 @@ fun_atiuser() {
             --parse_mode html
 
         ShellBot.sendMessage --chat_id $id_admin \
-            --text "🗑 REMOVER SUSPENSIÓN 🗑\n\nNombre del usuario:" \
+            --text "🗑 REMOVER SUSPENSO 🗑\n\nNome do usuario:" \
             --reply_markup "$(ShellBot.ForceReply)"
-        # La función llamada es fun_ati_user (activar usuario)
         ShellBot.addHandler --function_call fun_ati_user --callback_data "suspend_user"
     else
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "$(echo -e 🚫 ACCESO DENEGADO 🚫)"
+            --text "$(echo -e 🚫 ACESSO NEGADO 🚫)"
         return 0
     fi
 }
 
 fun_ati_user() {
-    unlock=$1  # Captura el nombre del usuario pasado como argumento en la variable unlock
+    unlock=$1  # Captura o nome do usuário passado como argumento na variável lock
     if [[ "${message_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc "${callback_query_from_username}" $ativos)" != '0' ]]; then
-        if id "$unlock" &>/dev/null; then  # Verifica si el usuario existe en el sistema
-            if grep -q "$unlock" /etc/bot/usuarios_suspensos; then # Verifica si está en la lista de suspendidos
-                passwd -u "$unlock"  # Reactiva el usuario (desbloquea la contraseña)
+        if id "$unlock" &>/dev/null; then  # Verifica se o usuário existe
+            if grep -q "$unlock" /etc/bot/usuarios_suspensos; then
+                passwd -u "$unlock"  # Reativa o usuário
                 ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-                    --text "$(echo -e "✅ USUARIO $unlock ACTIVADO CON ÉXITO ✅")" \
+                    --text "$(echo -e "✅ USUARIO $unlock ATIVADO COM SUCESSO ✅")" \
                     --parse_mode html
                 
-                # Elimina el usuario del archivo usuarios_suspensos
+                # Remove o usuário do arquivo usuarios_suspensos
                 sed -i "/^$unlock$/d" /etc/bot/usuarios_suspensos
             else
                 ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-                    --text "$(echo -e "❌ EL USUARIO NO ESTÁ SUSPENDIDO ❌")" \
+                    --text "$(echo -e "❌ O USUARIO NÃO ESTÁ SUSPENSO ❌")" \
                     --parse_mode html
             fi
         else
             ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-                --text "$(echo -e "❌ EL USUARIO NO EXISTE ❌")" \
+                --text "$(echo -e "❌ O USUARIO NAO EXISTE ❌")" \
                 --parse_mode html
         fi
     else
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "🚫 ACCESO DENEGADO 🚫"
+            --text "🚫 ACESSO NEGADO 🚫"
     fi
 }
 
+
 alterar_senha() {
-    # Si el usuario está suspendido
     [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "⚠️ ¡ESTÁS SUSPENDIDO! CONTACTA AL ADMINISTRADOR"
+            --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
         return 0
     }
-    # Si es el administrador o un usuario activo
     [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "🔐 CAMBIAR CONTRASEÑA 🔐\n\nNombre del usuario:" \
+            --text "🔐 Cambiar Contraseña 🔐\n\nNome do usuario:" \
             --reply_markup "$(ShellBot.ForceReply)"
     } || {
-        # Acceso denegado
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "🚫 ACCESO DENEGADO 🚫"
+            --text "🚫 ACESSO NEGADO 🚫"
         return 0
     }
 }
@@ -563,37 +500,31 @@ alterar_senha() {
 alterar_senha_user() {
     usuario=$1
     senha=$2
-    # Cambia la contraseña del usuario en el sistema
     echo "$usuario:$senha" | chpasswd
-    # Actualiza la contraseña en el archivo de SSHPlus
     echo "$senha" >/etc/SSHPlus/senha/$usuario
-    # Si el usuario fue creado por un revendedor (revenda), actualiza sus archivos de gestión
     [[ -e /etc/bot/revenda/${message_from_username}/usuarios/$usuario ]] && {
         senha2=$(cat /etc/bot/revenda/${message_from_username}/usuarios/$usuario | awk -F : {'print $2'})
         sed -i "/$usuario/ s/\b$senha2\b/$senha/g" /etc/bot/revenda/${message_from_username}/usuarios/$usuario
         sed -i "/$usuario/ s/\b$senha2\b/$senha/g" /etc/bot/info-users/$usuario
     }
-    # Desconecta las sesiones activas del usuario
     [[ $(ps -u $usuario | grep sshd | wc -l) != '0' ]] && pkill -u $usuario >/dev/null 2>&1
 }
 
 alterar_senha_root() {
-    # Si el usuario está suspendido
     [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "⚠️ ¡ESTÁS SUSPENDIDO! CONTACTA AL ADMINISTRADOR"
+            --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
         return 0
     }
 
-    # Permite solo al administrador
+    # Permite apenas ao admin
     [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] && {
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "🔐 CAMBIAR CONTRASEÑA ROOT 🔐\n\nIngresa la nueva contraseña:" \
+            --text "🔐 Alterar Contraseña ROOT 🔐\n\nDigite a nova senha:" \
             --reply_markup "$(ShellBot.ForceReply)"
     } || {
-        # Acceso denegado
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "🚫 ACCESO DENEGADO 🚫"
+            --text "🚫 ACESSO NEGADO 🚫"
         return 0
     }
 }
@@ -602,50 +533,47 @@ alterar_senha_root_exec() {
     local senha=${message_text[$id]}
     local sizepass=$(echo -e ${#senha})
 
-    # Verifica acceso
+    # Verifica acesso
     verifica_acesso
     [[ "$_erro" == '1' ]] && return 0
 
-    # Valida el tamaño de la contraseña
+    # Valida tamanho da senha
     [[ "$sizepass" -lt '4' ]] && {
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e "❌ ¡Error!\n\n⚠️ Usa un mínimo de 4 caracteres [EJ: 1234]")" \
+            --text "$(echo -e "❌ Erro !\n\n⚠️ Use mínimo 4 caracteres [EX: 1234]")" \
             --parse_mode html
         return 0
     }
 
-    # Aplica la contraseña root
+    # Aplica a senha root
     echo "root:$senha" | chpasswd
 
     # Confirma resultado
     if [[ $? -eq 0 ]]; then
         local ip=$(hostname -I | awk '{print $1}')
         ShellBot.sendMessage --chat_id ${message_from_id[$id]} \
-            --text "$(echo -e "=×=×=×=×=×=×=×=×=×=×=×\n<b>✅ ¡CONTRASEÑA ROOT CAMBIADA!</b>\n=×=×=×=×=×=×=×=×=×=×=×\n\n<b>Usuario:</b> root\n<b>Nueva contraseña:</b> $senha\n<b>IP:</b> $ip")" \
+            --text "$(echo -e "=×=×=×=×=×=×=×=×=×=×=×\n<b>✅ CONTRASEÑA ROOT ALTERADA!</b>\n=×=×=×=×=×=×=×=×=×=×=×\n\n<b>Usuário:</b> root\n<b>Nova senha:</b> $senha\n<b>IP:</b> $ip")" \
             --parse_mode html
     else
         ShellBot.sendMessage --chat_id ${message_from_id[$id]} \
-            --text "❌ Error al cambiar la contraseña root. Inténtalo de nuevo." \
+            --text "❌ Erro ao alterar a senha root. Tente novamente." \
             --parse_mode html
     fi
 }
 
 alterar_limite() {
-    # Si el usuario está suspendido
     [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "⚠️ ¡ESTÁS SUSPENDIDO! CONTACTA AL ADMINISTRADOR"
+            --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
         return 0
     }
-    # Si es el administrador o un usuario activo
     [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "👥 CAMBIAR LÍMITE 👥\n\nNombre del usuario:" \
+            --text "👥 Alterar Limite 👥\n\nNome do usuario:" \
             --reply_markup "$(ShellBot.ForceReply)"
     } || {
-        # Acceso denegado
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "🚫 ACCESO DENEGADO 🚫"
+            --text "🚫 ACESSO NEGADO 🚫"
         return 0
     }
 }
@@ -654,53 +582,43 @@ alterar_limite_user() {
     usuario=$1
     limite=$2
     database="/root/usuarios.db"
-    # Si es el administrador, actualiza el límite directamente en la base de datos principal
     [[ "${message_from_id[$id]}" == "$id_admin" ]] && {
         grep -v ^$usuario[[:space:]] /root/usuarios.db >/tmp/a
         mv /tmp/a /root/usuarios.db
         echo $usuario $limite >>/root/usuarios.db
         return 0
     }
-    # Si es un revendedor
     [[ -d /etc/bot/revenda/${message_from_username} ]] && {
-        # Verifica que el usuario pertenezca al revendedor
         [[ ! -e /etc/bot/revenda/${message_from_username}/usuarios/$usuario ]] && {
             ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-                --text "$(echo -e "❌ EL USUARIO NO EXISTE ❌")" \
+                --text "$(echo -e "❌ O USUARIO NAO EXISTE ❌")" \
                 --parse_mode html
             _erro='1'
             return 0
         }
-        # Verifica el límite total del revendedor (obsoleto/redundante, pero mantenido)
         _limTotal=$(grep -w 'LIMITE_REVENDA' /etc/bot/revenda/${message_from_username}/${message_from_username} | awk '{print $NF}')
         [[ "$limite" -gt "$_limTotal" ]] && {
             ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-                --text "$(echo -e "❌ NO TIENES SUFICIENTE LÍMITE ❌\n\nLímite Actual: $_limTotal ")" \
+                --text "$(echo -e "❌ VC NAO TEM LIMITE SUFICIENTE ❌\n\nLimite Atual: $_limTotal ")" \
                 --parse_mode html
             _erro='1'
             return 0
         }
-        # Obtiene el límite total asignado al revendedor (del archivo de activos)
         _limTotal=$(grep -w "${message_from_username}" $ativos | awk '{print $4}')
-        # Llama a una función para verificar el límite de usuarios *actuales* del revendedor
         fun_verif_limite_rev ${message_from_username}
-        # Calcula la suma del límite actual de usuarios del revendedor más el nuevo límite
         _limsomarev2=$(echo "$_result + $limite" | bc)
         echo "Total $_limsomarev2"
-        # Comprueba si el nuevo total excede el límite asignado al revendedor
         [[ "$_limsomarev2" -gt "$_limTotal" ]] && {
             [[ "$_limTotal" == "$(($_limTotal - $_result))" ]] && _restant1='0' || _restant1=$(($_limTotal - $_result))
             ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-                --text "$(echo -e "❌ No tienes límite suficiente\n\nLímite restante: $_restant1 ")" \
+                --text "$(echo -e "❌ Vc nao tem limite suficiente\n\nLimite restante: $_restant1 ")" \
                 --parse_mode html
             _erro='1'
             return 0
         }
-        # Si las comprobaciones pasan, actualiza el límite en la base de datos principal
         grep -v ^$usuario[[:space:]] /root/usuarios.db >/tmp/a
         mv /tmp/a /root/usuarios.db
         echo $usuario $limite >>/root/usuarios.db
-        # Actualiza el límite en los archivos del revendedor
         limite2=$(cat /etc/bot/revenda/${message_from_username}/usuarios/$usuario | awk -F : {'print $4'})
         sed -i "/\b$usuario\b/ s/\b$limite2\b/$limite/" /etc/bot/revenda/${message_from_username}/usuarios/$usuario
         sed -i "/\b$usuario\b/ s/\b$limite2\b/$limite/" /etc/bot/info-users/$usuario
@@ -708,21 +626,18 @@ alterar_limite_user() {
 }
 
 alterar_data() {
-    # Si el usuario está suspendido
     [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "⚠️ ¡ESTÁS SUSPENDIDO! CONTACTA AL ADMINISTRADOR"
+            --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
         return 0
     }
-    # Si es el administrador o un usuario activo
     [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "⏳ CAMBIAR FECHA ⏳\n\nNombre del usuario:" \
+            --text "⏳ Alterar Data ⏳\n\nNome do usuario:" \
             --reply_markup "$(ShellBot.ForceReply)"
     } || {
-        # Acceso denegado
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "🚫 ACCESO DENEGADO 🚫"
+            --text "🚫 ACESSO NEGADO 🚫"
         return 0
     }
 }
@@ -731,32 +646,24 @@ alterar_data_user() {
     usuario=$1
     inputdate=$2
     database="/root/usuarios.db"
-    # Si la entrada es un número de días (no contiene '//')
     [[ "$(echo -e "$inputdate" | sed -e 's/[^/]//ig')" != '//' ]] && {
-        # Calcula la nueva fecha sumando los días (DD/MM/AAAA)
         udata=$(date "+%d/%m/%Y" -d "+$inputdate days")
-        # Convierte al formato de sistema (AAAA-MM-DD)
         sysdate="$(echo "$udata" | awk -v FS=/ -v OFS=- '{print $3,$2,$1}')"
     } || {
-        # Si la entrada es una fecha en formato DD/MM/AAAA
         udata=$(echo -e "$inputdate")
-        # Convierte al formato de sistema (AAAA-MM-DD)
         sysdate="$(echo -e "$inputdate" | awk -v FS=/ -v OFS=- '{print $3,$2,$1}')"
         today="$(date -d today +"%Y%m%d")"
         timemachine="$(date -d "$sysdate" +"%Y%m%d")"
-        # Verifica si la fecha es anterior o igual a hoy
         [ $today -ge $timemachine ] && {
             verify='1'
             ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-                --text "$(echo -e "❌ ¡Error! Fecha inválida")" \
+                --text "$(echo -e "❌ Erro! Data invalida")" \
                 --parse_mode html
             _erro='1'
             return 0
         }
     }
-    # Aplica la nueva fecha de expiración al usuario del sistema
     chage -E $sysdate $usuario
-    # Si el usuario está en los archivos del revendedor, actualiza la fecha
     [[ -e /etc/bot/revenda/${message_from_username}/usuarios/$usuario ]] && {
         data2=$(cat /etc/bot/info-users/$usuario | awk -F : {'print $3'})
         sed -i "s;$data2;$udata;" /etc/bot/info-users/$usuario
@@ -766,44 +673,34 @@ alterar_data_user() {
 }
 
 ver_users() {
-    # Si el usuario es el ADMINISTRADOR
     if [[ "${callback_query_from_id[$id]}" == "$id_admin" ]]; then
         arq_info=/tmp/$(echo $RANDOM)
         local info_users
         info_users='=×=×=×=×=×=×=×=×=×=×=×=×=×=\n'
         info_users+='<b>INFORMACIÓN DE USUARIOS</b>\n'
         info_users+='=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n'
-        info_users+='⚠️ Muestra en el formato de abajo:\n\n'
-        info_users+='<code>USUARIO CONTRASEÑA LÍMITE FECHA</code>\n'
+        info_users+='⚠️ Exibe no formato abaixo:\n\n'
+        info_users+='<code>USUÁRIO CONTRASEÑA LIMITE FECHA</code>\n'
         ShellBot.sendMessage --chat_id $id_admin \
             --text "$(echo -e $info_users)" \
             --parse_mode html
-        
-        # Función interna para recopilar la información de TODOS los usuarios del sistema (UID >= 1000)
         fun_infu() {
             local info
-            # Itera sobre todos los usuarios válidos en /etc/passwd
             for user in $(cat /etc/passwd | awk -F : '$3 >= 1000 {print $1}' | grep -v nobody); do
                 info='===========================\n'
-                # Obtiene la contraseña
                 [[ -e /etc/SSHPlus/senha/$user ]] && senha=$(cat /etc/SSHPlus/senha/$user) || senha='Null'
-                # Obtiene el límite de conexión
                 [[ $(grep -wc $user $HOME/usuarios.db) != '0' ]] && limite=$(grep -w $user $HOME/usuarios.db | cut -d' ' -f2) || limite='Null'
-                # Obtiene la fecha de expiración
                 datauser=$(chage -l $user | grep -i co | awk -F : '{print $2}')
-                
                 [[ $datauser = ' never' ]] && {
                     data="00/00/00"
                 } || {
-                    # Comprueba si la fecha ya expiró
                     databr="$(date -d "$datauser" +"%Y%m%d")"
                     hoje="$(date -d today +"%Y%m%d")"
                     [[ $hoje -ge $databr ]] && {
-                        data="Vencido"
+                        data="Venceu"
                     } || {
-                        # Calcula los días restantes
                         dat="$(date -d"$datauser" '+%Y-%m-%d')"
-                        data=$(echo -e "$((($(date -ud $dat +%s) - $(date -ud $(date +%Y-%m-%d) +%s)) / 86400)) DÍAS")
+                        data=$(echo -e "$((($(date -ud $dat +%s) - $(date -ud $(date +%Y-%m-%d) +%s)) / 86400)) DIAS")
                     }
                 }
                 info+="$user • $senha • $limite • $data"
@@ -811,67 +708,51 @@ ver_users() {
             done
         }
         fun_infu >$arq_info
-        # Envía la información al administrador en bloques de 30 líneas
         while :; do
             ShellBot.sendMessage --chat_id $id_admin \
                 --text "$(while read linha; do echo $linha; done < <(sed '1,30!d' $arq_info))" \
                 --parse_mode html
             sed -i 1,30d $arq_info
-            # Sale del bucle cuando ya no quedan líneas
             [[ $(cat $arq_info | wc -l) = '0' ]] && rm $arq_info && break
         done
-        
-    # Si es un usuario ACTIVO (revendedor)
     elif [[ "$(grep -wc "${callback_query_from_username}" $ativos)" != '0' ]]; then
-        # Verifica si el revendedor está suspendido
         [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
             ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-                --text "⚠️ ¡ESTÁS SUSPENDIDO! CONTACTA AL ADMINISTRADOR"
+                --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
             return 0
         }
-        # Verifica si el revendedor ha creado usuarios
         [[ $(ls /etc/bot/revenda/${callback_query_from_username}/usuarios | wc -l) == '0' ]] && {
             ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-                --text "¡AÚN NO HAS CREADO NINGÚN USUARIO!"
+                --text "VC AINDA NAO CRIOU USUARIO!"
             return 0
         }
-        
         arq_info=/tmp/$(echo $RANDOM)
         local info_users
         info_users='=×=×=×=×=×=×=×=×=×=×=×=×=×=\n'
         info_users+='<b>INFORMACIÓN DE USUARIOS</b>\n'
         info_users+='=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n'
-        info_users+='⚠️ Muestra en el formato de abajo:\n\n'
-        info_users+='<code>USUARIO CONTRASEÑA LÍMITE FECHA</code>\n'
+        info_users+='⚠️ Exibe no formato abaixo:\n\n'
+        info_users+='<code>USUÁRIO CONTRASEÑA LIMITE FECHA</code>\n'
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
             --text "$(echo -e $info_users)" \
             --parse_mode html
-            
-        # Función interna para recopilar la información de los usuarios creados por el revendedor
         fun_infu() {
             local info
-            # Itera solo sobre los usuarios registrados en la carpeta del revendedor
             for user in $(ls /etc/bot/revenda/${callback_query_from_username}/usuarios); do
                 info='===========================\n'
-                # Obtiene la contraseña
                 [[ -e /etc/SSHPlus/senha/$user ]] && senha=$(cat /etc/SSHPlus/senha/$user) || senha='Null'
-                # Obtiene el límite de conexión
                 [[ $(grep -wc $user $HOME/usuarios.db) != '0' ]] && limite=$(grep -w $user $HOME/usuarios.db | cut -d' ' -f2) || limite='Null'
-                # Obtiene la fecha de expiración
                 datauser=$(chage -l $user | grep -i co | awk -F : '{print $2}')
-                
                 [[ $datauser = ' never' ]] && {
                     data="00/00/00"
                 } || {
-                    # Comprueba si la fecha ya expiró
                     databr="$(date -d "$datauser" +"%Y%m%d")"
                     hoje="$(date -d today +"%Y%m%d")"
                     [[ $hoje -ge $databr ]] && {
-                        data="Vencido"
+                        data="Venceu"
                     } || {
-                        # Calcula los días restantes
                         dat="$(date -d"$datauser" '+%Y-%m-%d')"
-                        data=$(echo -e "$((($(date -ud $dat +%s) - $(date -ud $(date +%Y-%m-%d) +%s)) / 86400)) DÍAS")
+                        data=$(echo -e "$((($(date -ud $dat +%s) - $(date -ud $(date +%Y-%m-%d) +%s)) / 86400)) DIAS")
                     }
                 }
                 info+="$user • $senha • $limite • $data"
@@ -879,7 +760,6 @@ ver_users() {
             done
         }
         fun_infu >$arq_info
-        # Envía la información al revendedor en bloques de 30 líneas
         while :; do
             ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
                 --text "$(while read linha; do echo $linha; done < <(sed '1,30!d' $arq_info))" \
@@ -887,13 +767,17 @@ ver_users() {
             sed -i 1,30d $arq_info
             [[ $(cat $arq_info | wc -l) = '0' ]] && rm $arq_info && break
         done
-    # Acceso DENEGADO (ni administrador ni activo)
     else
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "$(echo -e 🚫 ACCESO DENEGADO 🚫)"
+            --text "$(echo -e 🚫 ACESSO NEGADO 🚫)"
         return 0
     fi
 }
+
+
+
+
+
 
 
 
@@ -915,15 +799,12 @@ fun_drop() {
             PID=$pid
             user=$(echo $login | awk -F" " '{print $10}' | sed -r "s/'/ /g")
             waktu=$(echo $login | awk -F" " '{print $2"-"$1,$3}')
-            # Formatea la columna de tiempo
             while [ ${#waktu} -lt 13 ]; do
                 waktu=$waktu" "
             done
-            # Formatea la columna de usuario
             while [ ${#user} -lt 16 ]; do
                 user=$user" "
             done
-            # Formatea la columna de PID
             while [ ${#PID} -lt 8 ]; do
                 PID=$PID" "
             done
@@ -933,37 +814,27 @@ fun_drop() {
 }
 
 monitor_ssh() {
-    # Si el usuario es el ADMINISTRADOR
     if [[ "${callback_query_from_id[$id]}" == "$id_admin" ]]; then
         database="/root/usuarios.db"
         cad_onli=/tmp/$(echo $RANDOM)
         local info_on
         info_on='=×=×=×=×=×=×=×=×=×=×=×=×=×=\n'
-        info_on+='<b>MONITOR DE USUARIOS EN LÍNEA</b>\n'
+        info_on+='<b>MONITOR USUARIOS ONLINES</b>\n'
         info_on+='=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n'
-        info_on+='⚠️ Muestra en el formato de abajo:\n\n'
-        info_on+='<code>USUARIO  EN LÍNEA/LÍMITE  TIEMPO\n</code>'
+        info_on+='⚠️ Exibe no formato abaixo:\n\n'
+        info_on+='<code>USUÁRIO  ONLINE/LIMITE  TEMPO\n</code>'
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
             --text "$(echo -e $info_on)" \
             --parse_mode html
-        
-        # Función interna para obtener usuarios en línea (todos)
         fun_online() {
             local info2
-            # Itera sobre todos los usuarios del sistema
             for user in $(cat /etc/passwd | awk -F : '$3 >= 1000 {print $1}' | grep -v nobody); do
-                # Obtiene el límite
                 [[ "$(grep -w $user $database)" != "0" ]] && lim="$(grep -w $user $database | cut -d' ' -f2)" || lim=0
-                # Cuenta conexiones Dropbear
                 [[ $(netstat -nltp | grep 'dropbear' | wc -l) != '0' ]] && drop="$(fun_drop | grep "$user" | wc -l)" || drop=0
-                # Cuenta conexiones OpenVPN
                 [[ -e /etc/openvpn/openvpn-status.log ]] && ovp="$(cat /etc/openvpn/openvpn-status.log | grep -E ,"$user", | wc -l)" || ovp=0
-                # Cuenta conexiones SSH (sshd)
                 sqd="$(ps -u $user | grep sshd | wc -l)"
                 _cont=$(($drop + $ovp))
-                conex=$(($_cont + $sqd)) # Total de conexiones
-                
-                # Si hay conexiones, muestra la información
+                conex=$(($_cont + $sqd))
                 [[ $conex -gt '0' ]] && {
                     timerr="$(ps -o etime $(ps -u $user | grep sshd | awk 'NR==1 {print $1}') | awk 'NR==2 {print $1}')"
                     info2+="===========================\n"
@@ -973,14 +844,12 @@ monitor_ssh() {
             echo -e "$info2"
         }
         fun_online >$cad_onli
-        # Envía la lista al chat
         [[ $(cat $cad_onli | wc -w) != '0' ]] && {
             while :; do
                 ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
                     --text "$(while read linha; do echo $linha; done < <(sed '1,30!d' $cad_onli))" \
                     --parse_mode html
                 sed -i 1,30d $cad_onli
-                # Sale del bucle cuando no quedan más líneas
                 [[ "$(cat $cad_onli | wc -l)" = '0' ]] && {
                     rm $cad_onli
                     break
@@ -988,53 +857,40 @@ monitor_ssh() {
             done
         } || {
             ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-                --text "Ningún usuario en línea" \
+                --text "Nenhum usuario online" \
                 --parse_mode html
             return 0
         }
-        
-    # Si es un usuario ACTIVO (revendedor)
     elif [[ "$(grep -wc "${callback_query_from_username}" $ativos)" != '0' ]]; then
-        # Verifica suspensión
         [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
             ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-                --text "⚠️ ¡ESTÁS SUSPENDIDO! CONTACTA AL ADMINISTRADOR"
+                --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
             return 0
         }
-        # Verifica si tiene usuarios creados
         [[ $(ls /etc/bot/revenda/${callback_query_from_username}/usuarios | wc -l) == '0' ]] && {
             ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-                --text "¡AÚN NO HAS CREADO NINGÚN USUARIO!"
+                --text "VC AINDA NAO CRIOU USUARIO!"
             return 0
         }
-        
         database="/root/usuarios.db"
         cad_onli=/tmp/$(echo $RANDOM)
         local info_on
         info_on='=×=×=×=×=×=×=×=×=×=×=×=×=×=\n'
-        info_on+='<b>MONITOR DE USUARIOS EN LÍNEA</b>\n'
+        info_on+='<b>MONITOR USUARIOS ONLINES</b>\n'
         info_on+='=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n'
-        info_on+='⚠️ Muestra en el formato de abajo:\n\n'
-        info_on+='<code>USUARIO  EN LÍNEA/LÍMITE  TIEMPO\n</code>'
+        info_on+='⚠️ Exibe no formato abaixo:\n\n'
+        info_on+='<code>USUÁRIO  ONLINE/LIMITE  TEMPO\n</code>'
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
             --text "$(echo -e $info_on)" \
             --parse_mode html
-            
-        # Función interna para obtener usuarios en línea (solo los del revendedor)
         fun_online() {
             local info2
             for user in $(ls /etc/bot/revenda/${callback_query_from_username}/usuarios); do
-                # Obtiene el límite
                 [[ "$(grep -w $user $database)" != "0" ]] && lim="$(grep -w $user $database | cut -d' ' -f2)" || lim=0
-                # Cuenta conexiones Dropbear
                 [[ $(netstat -nltp | grep 'dropbear' | wc -l) != '0' ]] && drop="$(fun_drop | grep "$user" | wc -l)" || drop=0
-                # Cuenta conexiones OpenVPN
                 [[ -e /etc/openvpn/openvpn-status.log ]] && ovp="$(cat /etc/openvpn/openvpn-status.log | grep -E ,"$user", | wc -l)" || ovp=0
-                # Cuenta conexiones SSH (sshd)
                 sqd="$(ps -u $user | grep sshd | wc -l)"
-                conex=$(($sqd + $ovp + $drop)) # Total de conexiones
-                
-                # Si hay conexiones, muestra la información
+                conex=$(($sqd + $ovp + $drop))
                 [[ $conex -gt '0' ]] && {
                     timerr="$(ps -o etime $(ps -u $user | grep sshd | awk 'NR==1 {print $1}') | awk 'NR==2 {print $1}')"
                     info2+="------------------------------\n"
@@ -1044,7 +900,6 @@ monitor_ssh() {
             echo -e "$info2"
         }
         fun_online >$cad_onli
-        # Envía la lista al chat
         [[ $(cat $cad_onli | wc -w) != '0' ]] && {
             while :; do
                 ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
@@ -1058,15 +913,13 @@ monitor_ssh() {
             done
         } || {
             ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-                --text "Ningún usuario en línea" \
+                --text "Nenhum usuario online" \
                 --parse_mode html
             return 0
         }
-        
-    # Acceso DENEGADO
     else
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "$(echo -e 🚫 ACCESO DENEGADO 🚫)"
+            --text "$(echo -e 🚫 ACESSO NEGADO 🚫)"
         return 0
     fi
 }
@@ -1074,30 +927,30 @@ monitor_ssh() {
 fun_verif_user() {
     user=$1
     
-    # Verifica si el usuario fue proporcionado
+    # Verifica se o usuário foi fornecido
     [[ -z "$user" ]] && {
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e "Error: Ningún usuario proporcionado.")" \
+            --text "$(echo -e "Erro: Nenhum usuário fornecido.")" \
             --parse_mode html
         return 0
     }
 
-    # Verifica si quien está ejecutando es el administrador
+    # Verifica se quem está executando é o administrador
     if [[ "${message_from_id[$id]}" == "$id_admin" ]]; then
-        # Verifica si el usuario existe en el sistema (UID >= 1000)
+        # Verifica se o usuário existe no sistema
         if [[ "$(awk -F : '$3 >= 1000 { print $1 }' /etc/passwd | grep -wc $user)" == '0' ]]; then
             ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-                --text "$(echo -e ❌ ¡Usuario $user no existe en el sistema!)" \
+                --text "$(echo -e ❌ Usuario $user não existe no sistema!)" \
                 --parse_mode html
             _erro='1'
             return 0
         fi
     else
-        # Si no es administrador, verifica si el usuario existe en la reventa
+        # Se não for administrador, verifica se o usuário existe na revenda
         if [[ -d /etc/bot/revenda/${message_from_username} ]]; then
             if [[ ! -e /etc/bot/revenda/${message_from_username}/usuarios/$user ]]; then
                 ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-                    --text "$(echo -e ❌ ¡Usuario $user no existe en la reventa!)" \
+                    --text "$(echo -e ❌ Usuario $user nao existe na revenda!)" \
                     --parse_mode html
                 _erro='1'
                 return 0
@@ -1107,67 +960,63 @@ fun_verif_user() {
 }
 
 fun_down() {
-    # Solo el administrador puede acceder a esta función
     [[ "${callback_query_from_id[$id]}" != "$id_admin" ]] && {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "🚫 ACCESO DENEGADO 🚫"
+            --text "🚫 ACESSO NEGADO 🚫"
         return 0
     }
-    # Crea el directorio temporal si no existe
     [[ ! -d /tmp/file ]] && mkdir /tmp/file
-    
     ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-        --text "[1] - AÑADIR ARCHIVO\n[2] - ELIMINAR ARCHIVO\n\nIndica la opción [1-2]:" \
+        --text "[1] - ADICIONAR ARQUIVO\n[2] - EXCLUIR ARQUIVO\n\nInforme a opcao [1-2]:" \
         --reply_markup "$(ShellBot.ForceReply)"
 }
 
 infovps() {
-    # Solo el administrador puede acceder a esta función
     [[ "${callback_query_from_id[$id]}" != "$id_admin" ]] && {
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "$(echo -e 🚫 ACCESO DENEGADO 🚫)"
+            --text "$(echo -e 🚫 ACESSO NEGADO 🚫)"
         return 0
     }
 
     PTs='/tmp/prts'
 
-    # Informaciones generales del sistema
+    # Informações gerais do sistema
     _ons=$(ps -x | grep sshd | grep -v root | grep priv | wc -l)
     [[ -e /etc/openvpn/openvpn-status.log ]] && _onop=$(grep -c "10.8.0" /etc/openvpn/openvpn-status.log) || _onop="0"
     [[ -e /etc/default/dropbear ]] && _drp=$(ps aux | grep dropbear | grep -v grep | wc -l) _ondrp=$(($_drp - 1)) || _ondrp="0"
-    _on=$(($_ons + $_onop + $_ondrp)) # Total de conexiones SSH/Dropbear/OpenVPN
-    total=$(awk -F: '$3>=1000 {print $1}' /etc/passwd | grep -v nobody | wc -l) # Total de usuarios en el sistema
+    _on=$(($_ons + $_onop + $_ondrp))
+    total=$(awk -F: '$3>=1000 {print $1}' /etc/passwd | grep -v nobody | wc -l)
     system=$(cat /etc/issue.net)
     uso=$(top -bn1 | awk '/Cpu/ { cpu = "" 100 - $8 "%" }; END { print cpu }')
     cpucores=$(grep -c cpu[0-9] /proc/stat)
     ram1=$(free -h | grep -i mem | awk {'print $2'})
     usoram=$(free -m | awk 'NR==2{printf "%.2f%%", $3*100/$2 }')
-    total=$(cat -n /root/usuarios.db | tail -n 1 | awk '{print $1}') # Total de usuarios en la base de datos
+    total=$(cat -n /root/usuarios.db | tail -n 1 | awk '{print $1}')
 
     # ================================
-    # 🔍 LISTADO DE PUERTOS ACTIVOS
+    # 🔍 LISTAGEM DE PORTAS ATIVAS (como no seu script)
     # ================================
-    echo "🔌 <b>SERVICIOS EN EJECUCIÓN</b>" > $PTs
+    echo "🔌 <b>SERVIÇOS EM EXECUÇÃO</b>" > $PTs
     echo "" >> $PTs
     PT=$(lsof -V -i tcp -P -n 2>/dev/null | grep -v "ESTABLISHED" | grep -v "COMMAND" | grep "LISTEN")
     for porta in $(echo -e "$PT" | cut -d: -f2 | cut -d' ' -f1 | uniq); do
         svcs=$(echo -e "$PT" | grep -w "$porta" | awk '{print $1}' | uniq)
-        echo -e "<b>$svcs</b> PUERTO <b>$porta</b>" >> $PTs
+        echo -e "<b>$svcs</b> PORTA <b>$porta</b>" >> $PTs
     done
 
     # ================================
-    # 🧾 MONTAR MENSAJE FINAL
+    # 🧾 MONTAR MENSAGEM FINAL
     # ================================
     local info
     info="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n"
-    info+="<b>INFORMACIÓN DEL SERVIDOR</b>\n"
+    info+="<b>INFORMAÇÕES DO SERVIDOR</b>\n"
     info+="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n"
-    info+="<b>SISTEMA OPERATIVO</b>\n"
+    info+="<b>SISTEMA OPERACIONAL</b>\n"
     info+="$system\n\n"
-    info+="<b>PROCESADOR</b>\n"
+    info+="<b>PROCESSADOR</b>\n"
     info+="Núcleos: <b>$cpucores</b>\n"
-    info+="Utilización: <b>$uso</b>\n\n"
-    info+="<b>MEMORIA RAM</b>\n"
+    info+="Utilização: <b>$uso</b>\n\n"
+    info+="<b>MEMÓRIA RAM</b>\n"
     info+="Total: <b>$ram1</b>\n"
     info+="Uso: <b>$usoram</b>\n\n"
 
@@ -1175,7 +1024,7 @@ infovps() {
         info+="$(echo -e "$linha")\n"
     done < <(cat $PTs)
 
-    info+="\n<b>$total</b> USUARIOS — <b>$_on</b> EN LÍNEA"
+    info+="\n<b>$total</b> USUÁRIOS — <b>$_on</b> ONLINE"
 
     ShellBot.sendMessage --chat_id $id_admin \
         --text "$(echo -e "$info")" \
@@ -1187,21 +1036,20 @@ fun_download() {
     Opc=$1
     [[ -z "$Opc" ]] && {
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e "❌Error, inténtalo de nuevo")"
+            --text "$(echo -e "❌Erro tente novamente")"
         _erro='1'
         return 0
     }
     _file2=$2
     [[ -z "$_file2" ]] && {
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e "❌Error, inténtalo de nuevo")"
+            --text "$(echo -e "❌Erro tente novamente")"
         _erro='1'
         return 0
     }
     _DirArq=$(ls /etc/bot/arquivos)
     i=0
     unset _Pass
-    # Itera sobre los archivos en /etc/bot/arquivos para crear una lista
     while read _Arq; do
         i=$(expr $i + 1)
         _oP=$i
@@ -1209,17 +1057,12 @@ fun_download() {
         echo -e "[$i] - $_Arq"
         _Pass+="\n${_oP}:${_Arq}"
     done <<<"${_DirArq}"
-    # Selecciona el nombre del archivo basado en la opción (Opc)
     _file=$(echo -e "${_Pass}" | grep -E "\b$Opc\b" | cut -d: -f2)
     echo $_file2
-    
-    # Envía el archivo de configuración (.apk, .sh, etc.)
     ShellBot.sendDocument --chat_id ${message_from_id[$id]} \
         --document "@/etc/bot/arquivos/$_file" \
-        --caption "$(echo -e "✅ CREADO CON ÉXITO ✅\n\nUSUARIO: <code>$(awk -F " " '/Nome/ {print $2}' $_file2)</code>\nCONTRASEÑA: <code>$(awk -F " " '/Contraseña/ {print $2}' $_file2)</code>\nLÍMITE: $(awk -F " " '/Limite/ {print $2}' $_file2)\nEXPIRA EL: $(awk -F " " '/Validade/ {print $2}' $_file2)")" \
+        --caption "$(echo -e "✅ CREADO CON EXITO ✅\n\nUSUARIO: <code>$(awk -F " " '/Nome/ {print $2}' $_file2)</code>\nCONTRASEÑA: <code>$(awk -F " " '/Contraseña/ {print $2}' $_file2)</code>\nLIMITE: $(awk -F " " '/Limite/ {print $2}' $_file2)\nEXPIRA EL: $(awk -F " " '/Validade/ {print $2}' $_file2)")" \
         --parse_mode html
-        
-    # Si existe el archivo OpenVPN (.ovpn), lo envía también
     [[ -e "/root/$(awk -F " " '/Nome/ {print $2}' $_file2).ovpn" ]] && {
         ShellBot.sendDocument --chat_id ${message_from_id[$id]} \
             --document "@/root/$(awk -F " " '/Nome/ {print $2}' $_file2).ovpn"
@@ -1227,45 +1070,35 @@ fun_download() {
 }
 
 otimizer() {
-    # Solo el administrador puede acceder a esta función
     [[ "${callback_query_from_id[$id]}" != "$id_admin" ]] && {
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "$(echo -e 🚫 ACCESO DENEGADO 🚫)"
+            --text "$(echo -e 🚫 ACESSO NEGADO 🚫)"
         return 0
     }
-    
-    # Captura la utilización de memoria antes de optimizar
     MEM1=$(free | awk '/Mem:/ {print int(100*$3/$2)}')
-    
     ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-        --text "🧹 LIMPIANDO CACHÉ DEL SERVIDOR"
-        
-    # Comandos de optimización: limpieza de paquetes, liberación de caché y swap
+        --text "🧹 LIMPANDO CACHE DO SERVIDOR"
     apt-get autoclean -y
     echo 3 >/proc/sys/vm/drop_caches
     sync && sysctl -w vm.drop_caches=3 1>/dev/null 2>/dev/null
     sysctl -w vm.drop_caches=0 1>/dev/null 2>/dev/null
     swapoff -a
     swapon -a
-    
-    # Captura nueva información de memoria
-    ram1=$(free -h | grep -i mem | awk {'print $2'}) # Total
-    ram2=$(free -h | grep -i mem | awk {'print $3'}) # En uso
-    ram3=$(free -h | grep -i mem | awk {'print $4'}) # Libre
-    MEM2=$(free | awk '/Mem:/ {print int(100*$3/$2)}') # Utilización actual (%)
-    res=$(expr $MEM1 - $MEM2) # Porcentaje de reducción
-    
+    ram1=$(free -h | grep -i mem | awk {'print $2'})
+    ram2=$(free -h | grep -i mem | awk {'print $3'})
+    ram3=$(free -h | grep -i mem | awk {'print $4'})
+    MEM2=$(free | awk '/Mem:/ {print int(100*$3/$2)}')
+    res=$(expr $MEM1 - $MEM2)
     local sucess
     sucess="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n"
-    sucess+="<b>¡OPTIMIZADO CON ÉXITO!</b>\n"
+    sucess+="<b>OTIMIZADO COM SUCESSO !</b>\n"
     sucess+="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n"
-    sucess+="<i>Utilización anterior</i> $MEM1%\n\n"
+    sucess+="<i>Ultilizacao anterior</i> $MEM1%\n\n"
     sucess+="<b>Memoria Ram Total</b> $ram1\n"
-    sucess+="<b>Libre</b> $ram3\n"
-    sucess+="<b>En uso</b> $ram2\n"
-    sucess+="<i>Utilización actual</i> $MEM2%\n\n"
-    sucess+="<b>Ahorro de:</b> $res%"
-    
+    sucess+="<b>livre</b> $ram3\n"
+    sucess+="<b>Em uso</b> $ram2\n"
+    sucess+="<i>Ultilizacao atual</i> $MEM2%\n\n"
+    sucess+="<b>Economia de:</b> $res%"
     ShellBot.sendMessage --chat_id $id_admin \
         --text "$(echo -e $sucess)" \
         --parse_mode html
@@ -1273,63 +1106,48 @@ otimizer() {
 }
 
 speed_test() {
-    # Solo el administrador puede acceder a esta función
     [[ "${callback_query_from_id[$id]}" != "$id_admin" ]] && {
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "$(echo -e 🚫 ACCESO DENEGADO 🚫)"
+            --text "$(echo -e 🚫 ACESSO NEGADO 🚫)"
         return 0
     }
-    
-    # Limpia archivos anteriores y notifica el inicio
     rm -rf $HOME/speed >/dev/null 2>&1
     ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-        --text "🚀 PROBANDO VELOCIDAD DEL SERVIDOR"
-        
-    # Ejecuta speedtest y guarda el resultado
+        --text "🚀 TESTANDO VELOCIDADE DO SERVIDOR"
     speedtest --share >speed
-    
-    # Extrae los valores del resultado
     png=$(cat speed | sed -n '5 p' | awk -F : {'print $NF'})
     down=$(cat speed | sed -n '7 p' | awk -F : {'print $NF'})
     upl=$(cat speed | sed -n '9 p' | awk -F : {'print $NF'})
-    lnk=$(cat speed | sed -n '10 p' | awk {'print $NF'}) # Enlace al resultado
-    
+    lnk=$(cat speed | sed -n '10 p' | awk {'print $NF'})
     local msg
     msg="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n"
-    msg+="<b>🚀 VELOCIDAD DEL SERVIDOR 🚀</b>\n"
+    msg+="<b>🚀 VELOCIDADE DO SERVIDOR 🚀</b>\n"
     msg+="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n"
     msg+="<b>PING/LATENCIA:</b>$png\n"
-    msg+="<b>DESCARGA (DOWNLOAD):</b>$down\n"
-    msg+="<b>SUBIDA (UPLOAD):</b>$upl\n"
-    
-    # Envía el resultado y el enlace
+    msg+="<b>DOWNLOAD:</b>$down\n"
+    msg+="<b>UPLOAD:</b>$upl\n"
     ShellBot.sendMessage --chat_id $id_admin \
         --text "$(echo -e $msg)" \
         --parse_mode html
     ShellBot.sendMessage --chat_id $id_admin \
         --text "$(echo -e $lnk)" \
         --parse_mode html
-        
-    # Limpia archivos temporales
     rm -rf $HOME/speed >/dev/null 2>&1
     return 0
 }
 
 backup_users() {
-    # Solo el administrador puede acceder a esta función
     [[ "${callback_query_from_id[$id]}" != "$id_admin" ]] && {
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "$(echo -e "🚫 ACCESO DENEGADO 🚫")"
+            --text "$(echo -e "🚫 ACESSO NEGADO 🚫")"
         return 0
     }
 
     ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-        --text "♻️ CREANDO COPIA DE SEGURIDAD DE USUARIOS..."
+        --text "♻️ CRIANDO BACKUP DE USUÁRIOS..."
 
-    # Elimina el backup anterior
     rm -f /root/backup.vps 1>/dev/null 2>/dev/null
 
-    # Crea el archivo tar con todos los archivos de configuración
     tar cvf /root/backup.vps \
         /root/usuarios.db \
         /etc/shadow \
@@ -1343,10 +1161,9 @@ backup_users() {
         /etc/bot/arquivos/ \
         1>/dev/null 2>/dev/null
 
-    # Envía el archivo de backup al administrador
     ShellBot.sendDocument --chat_id ${id_admin} \
         --document "@/root/backup.vps" \
-        --caption "$(echo -e "♻️ COPIA DE SEGURIDAD DE USUARIOS, REVENDEDORES Y SUBS ♻️")"
+        --caption "$(echo -e "♻️ BACKUP DE USUÁRIOS, REVENDEDORES E SUBS ♻️")"
 
     return 0
 }
@@ -1354,10 +1171,10 @@ backup_users() {
 sobremim() {
     local msg
     msg="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n"
-    msg+="<b>🤖 BOT ADMINISTRADOR DE VPS 🤖</b>\n"
+    msg+="<b>🤖 BOT VPS MANAGER 🤖</b>\n"
     msg+="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n"
-    msg+="Fui creado con el propósito de proporcionar información y herramientas para la gestión de VPN en servidores 🐧 GNU/Linux 🐧.\n\n"
-    msg+="<b>Menú:</b> /menu\n"
+    msg+="Fui criado com o propósito de fornecer informações e ferramentas para gestão VPN em servidores 🐧 GNU/Linux 🐧.\n\n"
+    msg+="<b>Menu:</b> /menu\n"
     ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
         --text "$(echo -e $msg)" \
         --parse_mode html
@@ -1367,31 +1184,28 @@ sobremim() {
 fun_add_teste() {
     if [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]]; then
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "⚠️ ¡ESTÁS SUSPENDIDO! CONTACTA AL ADMINISTRADOR"
+            --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
         return 0
     elif [[ "${callback_query_from_id[$id]}" == "$id_admin" ]]; then
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "👤 CREAR PRUEBA (TEST) 👤\n\n¿Cuántas horas debe durar? EJ: 1:" \
+            --text "👤 CREAR TESTE 👤\n\nQuantas horas deve durar EX: 1:" \
             --reply_markup "$(ShellBot.ForceReply)"
     elif [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]]; then
-        # Es un revendedor
         _limTotal=$(grep -w "${callback_query_from_username}" $ativos | awk '{print $4}')
         fun_verif_limite_rev ${callback_query_from_username}
-        # Verifica si crear la prueba (límite 1) excede su límite
         _limsomarev2=$(echo "$_result + 1" | bc)
         [[ "$_limsomarev2" -gt "$_limTotal" ]] && {
             ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-                --text "❌ ¡NO TIENES LÍMITE DISPONIBLE!"
+                --text "❌ VC NAO TEM LIMITE DISPONIVEL!"
             return 0
         } || {
-            # Si tiene límite, pide las horas
             ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-                --text "👤 CREAR PRUEBA (TEST) 👤\n\n¿Cuántas horas debe durar? EJ: 1:" \
+                --text "👤 CREAR TESTE 👤\n\nQuantas horas deve durar EX: 1:" \
                 --reply_markup "$(ShellBot.ForceReply)"
         }
     else
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "🚫 ACCESO DENEGADO 🚫"
+            --text "🚫 ACESSO NEGADO 🚫"
         return 0
     fi
 }
@@ -1400,20 +1214,16 @@ fun_teste() {
     usuario=$(echo teste$((RANDOM % +500)))
     senha='1234'
     limite='1'
-    t_time=$1 # Horas de duración
-    ex_date=$(date '+%d/%m/%C%y' -d " +2 days") # Fecha de expiración (DD/MM/AAAA)
-    tuserdate=$(date '+%C%y/%m/%d' -d " +2 days") # Fecha de expiración para useradd (AAAA/MM/DD)
-    
-    # Manejo de errores si no se proporciona el tiempo
+    t_time=$1
+    ex_date=$(date '+%d/%m/%C%y' -d " +2 days")
+    tuserdate=$(date '+%C%y/%m/%d' -d " +2 days")
     [[ -z $t_time ]] && {
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e "❌ Error, inténtalo de nuevo")" \
+            --text "$(echo -e "❌ Erro tente novamente")" \
             --parse_mode html
         return 0
         _erro='1'
     }
-    
-    # Crea el usuario en el sistema
     /usr/sbin/useradd -M -N -s /bin/false $usuario -e $tuserdate >/dev/null 2>&1
     (
         echo "$senha"
@@ -1421,18 +1231,13 @@ fun_teste() {
     ) | passwd $usuario >/dev/null 2>&1
     echo "$senha" >/etc/SSHPlus/senha/$usuario
     echo "$usuario $limite" >>/root/usuarios.db
-    
-    # Registra el usuario si no es el administrador (en la carpeta del revendedor)
     [[ "${message_from_id[$id]}" != "$id_admin" ]] && {
         echo "$usuario:$senha:$ex_date:$limite" >/etc/bot/revenda/${message_from_username}/usuarios/$usuario
     }
-    
     dir_teste="/etc/bot/revenda/${message_from_username}/usuarios/$usuario"
-    
-    # Crea el script de eliminación automática (at)
     cat <<-EOF >/etc/SSHPlus/userteste/$usuario.sh
 	#!/bin/bash
-	# USUARIO PRUEBA (TEST)
+	# USUARIO TESTE
 	[[ \$(ps -u "$usuario" | grep -c sshd) != '0' ]] && pkill -u $usuario
 	userdel --force $usuario
 	grep -v ^$usuario[[:space:]] /root/usuarios.db > /tmp/ph ; cat /tmp/ph > /root/usuarios.db
@@ -1440,197 +1245,135 @@ fun_teste() {
 	rm /etc/SSHPlus/senha/$usuario > /dev/null 2>&1
 	rm /etc/SSHPlus/userteste/$usuario.sh
 	EOF
-    
-    # Programa la eliminación automática
     chmod +x /etc/SSHPlus/userteste/$usuario.sh
     echo "/etc/SSHPlus/userteste/$usuario.sh" | at now + $t_time hour >/dev/null 2>&1
-    
-    # Define la unidad de tiempo para el mensaje
     [[ "$t_time" == '1' ]] && hrs="hora" || hrs="horas"
-    
-    # Envía la información al usuario
     [[ "$(ls /etc/bot/arquivos | wc -l)" != '0' ]] && {
-        # Si hay archivos, los envía con la información de la cuenta
         for arqv in $(ls /etc/bot/arquivos); do
             ShellBot.sendDocument --chat_id ${message_from_id[$id]} \
                 --document "@/etc/bot/arquivos/$arqv" \
-                --caption "$(echo -e "✅ CREADO CON ÉXITO ✅\n\nUSUARIO: <code>$usuario</code>\nCONTRASEÑA: <code>1234</code>\n\n⏳ Expira en: $t_time $hrs")" \
+                --caption "$(echo -e "✅ Criado com sucesso ✅\n\nUSUARIO: <code>$usuario</code>\nCONTRASEÑA: <code>1234</code>\n\n⏳ Expira em: $t_time $hrs")" \
                 --parse_mode html
         done
         return 0
     } || {
-        # Si no hay archivos, envía solo el texto
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e "✅ <b>CREADO CON ÉXITO</b> ✅\n\nUSUARIO: <code>$usuario</code>\nCONTRASEÑA: <code>1234</code>\n\n⏳ Expira en: $t_time $hrs")" \
+            --text "$(echo -e "✅ <b>CREADO CON EXITO</b> ✅\n\nUSUARIO: <code>$usuario</code>\nCONTRASEÑA: <code>1234</code>\n\n⏳ Expira em: $t_time $hrs")" \
             --parse_mode html
         return 0
     }
 }
 
 fun_exp_user() {
-    # Si el usuario es el ADMINISTRADOR
     if [[ "${callback_query_from_id[$id]}" == "$id_admin" ]]; then
-        # Verifica si hay usuarios en la base de datos principal
         [[ $(cat /root/usuarios.db | wc -l) == '0' ]] && {
             ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-                --text "¡AÚN NO HAS CREADO NINGÚN USUARIO!"
+                --text "VC AINDA NAO CRIOU USUARIO!"
             return 0
         }
-        
-        datenow=$(date +%s) # Tiempo actual en segundos
-        
-        # Itera sobre todos los usuarios SSH del sistema (UID >= 1000)
+        datenow=$(date +%s)
         for user in $(cat /etc/passwd | awk -F : '$3 >= 1000 {print $1}' | grep -v nobody); do
-            expdate=$(chage -l $user | awk -F: '/Account expires/{print $2}') # Fecha de expiración (texto)
-            
-            # Si la cuenta nunca expira, continúa con el siguiente usuario
+            expdate=$(chage -l $user | awk -F: '/Account expires/{print $2}')
             echo $expdate | grep -q never && continue
-            
-            # Convierte la fecha de expiración a segundos
+            datanormal=$(date -d"$expdate" '+%d/%m/%Y')
             expsec=$(date +%s --date="$expdate")
-            
-            # Calcula la diferencia (Actual - Expiración). Si es positivo o cero, ha expirado.
             diff=$(echo $datenow - $expsec | bc -l)
-            
-            # Si el resultado es negativo (empieza por -), el usuario aún no expira.
             echo $diff | grep -q ^\- && continue
-            
-            # --- ELIMINACIÓN DEL USUARIO EXPIRADO ---
-            pkill -u $user # Finaliza las conexiones activas
-            userdel --force $user # Elimina el usuario del sistema
-            
-            # Elimina el usuario de la base de datos principal
+            pkill -u $user
+            userdel --force $user
             grep -v ^$user[[:space:]] /root/usuarios.db >/tmp/ph
             cat /tmp/ph >/root/usuarios.db
-            
-            # Elimina archivos relacionados
             [[ -e /etc/bot/info-users/$user ]] && rm /etc/bot/info-users/$user
             [[ -e /etc/SSHPlus/userteste/$user.sh ]] && rm /etc/SSHPlus/userteste/$user.sh
-            
-            # Si existen revendedores, elimina el registro de sus carpetas
             [[ "$(ls /etc/bot/revenda)" != '0' ]] && {
                 for ex in $(ls /etc/bot/revenda); do
-                    [[ -e /etc/bot/revenda/$ex/usuarios/$user ]] && rm /etc/bot/revenda/$ex/usuarios/$user
+                    [[ -e /etc/bot/revenda/$exp/usuarios/$user ]] && rm /etc/bot/revenda/$ex/usuarios/$user
                 done
             }
         done
-        
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "⌛️ USUARIOS SSH EXPIRADOS ELIMINADOS"
+            --text "⌛️ USUARIOS SSH EXPIRADOS REMOVIDOS"
         return 0
-        
-    # Si el usuario es un REVENDEDOR ACTIVO
     elif [[ "$(grep -wc "${callback_query_from_username}" $ativos)" != '0' ]]; then
-        
-        # Verifica suspensión del revendedor
         [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
             ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-                --text "⚠️ ¡ESTÁS SUSPENDIDO! CONTACTA AL ADMINISTRADOR"
+                --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
             return 0
         }
-        
-        # Verifica si el revendedor ha creado usuarios
         [[ $(ls /etc/bot/revenda/${callback_query_from_username}/usuarios | wc -l) == '0' ]] && {
             ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-                --text "¡AÚN NO HAS CREADO NINGÚN USUARIO!"
+                --text "VC AINDA NAO CRIOU USUARIO!"
             return 0
         }
-        
         datenow=$(date +%s)
         dir_user="/etc/bot/revenda/${callback_query_from_username}/usuarios"
-        
-        # Itera solo sobre los usuarios creados por este revendedor
         for user in $(ls $dir_user); do
             expdate=$(chage -l $user | awk -F: '/Account expires/{print $2}')
             echo $expdate | grep -q never && continue
+            datanormal=$(date -d"$expdate" '+%d/%m/%Y')
             expsec=$(date +%s --date="$expdate")
             diff=$(echo $datenow - $expsec | bc -l)
             echo $diff | grep -q ^\- && continue
-            
-            # --- ELIMINACIÓN DEL USUARIO EXPIRADO ---
-            pkill -f $user # Finaliza las conexiones activas
-            userdel --force $user # Elimina el usuario del sistema
-            
-            # Elimina el usuario de la base de datos principal
+            pkill -f $user
+            userdel --force $user
             grep -v ^$user[[:space:]] /root/usuarios.db >/tmp/ph
             cat /tmp/ph >/root/usuarios.db
-            
-            # Elimina archivos relacionados
             [[ -e /etc/SSHPlus/userteste/$user.sh ]] && rm /etc/SSHPlus/userteste/$user.sh
-            [[ -e "$dir_user/$user" ]] && rm $dir_user/$user # Elimina el registro de la carpeta del revendedor
+            [[ -e "$dir_user/$user" ]] && rm $dir_user/$user
         done
-        
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "⌛️ USUARIOS SSH EXPIRADOS ELIMINADOS"
+            --text "⌛️ USUARIOS SSH EXPIRADOS REMOVIDOS"
         return 0
-        
-    # Acceso DENEGADO
     else
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "$(echo -e 🚫 ACCESO DENEGADO 🚫)"
+            --text "$(echo -e 🚫 ACESSO NEGADO 🚫)"
         return 0
     fi
 }
 
 relatorio_rev() {
-    # Si el usuario es el ADMINISTRADOR
     if [[ "${callback_query_from_id[$id]}" = "$id_admin" ]]; then
-        # 1. Recolección de datos generales
         _ons=$(ps -x | grep sshd | grep -v root | grep priv | wc -l)
         _tuser=$(awk -F: '$3>=1000 {print $1}' /etc/passwd | grep -v nobody | wc -l)
         [[ -e /etc/openvpn/openvpn-status.log ]] && _onop=$(grep -c "10.8.0" /etc/openvpn/openvpn-status.log) || _onop="0"
         [[ -e /etc/default/dropbear ]] && _drp=$(ps aux | grep dropbear | grep -v grep | wc -l) _ondrp=$(($_drp - 1)) || _ondrp="0"
-        _onli=$(($_ons + $_onop + $_ondrp)) # Total online
-        _cont_rev=$(echo $(grep -wc revenda $ativos) - $(grep -wc revenda $suspensos) | bc) # Revendedores activos (excluyendo suspendidos)
-        _cont_sus=$(grep -wc revenda $suspensos) # Revendedores suspendidos
-        _cont_sub=$(grep -wc subrevenda $ativos) # Sub-revendedores activos
-        _cont_revt=$(grep -wc revenda $ativos) # Total de revendedores (activos)
-
-        # 2. Montaje del mensaje inicial (resumen)
+        _onli=$(($_ons + $_onop + $_ondrp))
+        _cont_rev=$(echo $(grep -wc revenda $ativos) - $(grep -wc revenda $suspensos) | bc)
+        _cont_sus=$(grep -wc revenda $suspensos)
+        _cont_sub=$(grep -wc subrevenda $ativos)
+        _cont_revt=$(grep -wc revenda $ativos)
         local msg
         msg="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n"
-        msg+="<b>📊 REPORTE | INFORMACIÓN GENERAL</b>\n"
+        msg+="<b>📊 RELATORIO | INFORMACION</b>\n"
         msg+="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n"
-        msg+="<b>Usuarios totales:</b> $_tuser\n"
-        msg+="<b>Usuarios en línea:</b> $_onli\n"
-        msg+="<b>Revendedores Activos:</b> $_cont_rev\n"
-        msg+="<b>Revendedores Suspendidos:</b> $_cont_sus\n"
-        msg+="<b>Sub-Revendedores:</b> $_cont_sub\n\n"
-        msg+="<b>Usuario:</b> @${callback_query_from_username}\n"
+        msg+="<b>Usuarios total:</b> $_tuser\n"
+        msg+="<b>Usuarios online:</b> $_onli\n"
+        msg+="<b>Revendas Ativas:</b> $_cont_rev\n"
+        msg+="<b>Revendas Suspensas:</b> $_cont_sus\n"
+        msg+="<b>Sub-Revendas:</b> $_cont_sub\n\n"
+        msg+="<b>User:</b> @${callback_query_from_username}\n"
         msg+="<b>ID:</b> <code>${callback_query_from_id}</code>\n"
-
-        # 3. Preparación del informe detallado y verificación de existencia
         [[ $_cont_revt != '0' ]] && {
             ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-                --text "📊 CREANDO REPORTE !"
+                --text "📊 CRIANDO RELATORIO !"
         } || {
             ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-                --text "⚠️ ¡NINGÚN REVENDEDOR ENCONTRADO!"
+                --text "⚠️ NENHUM REVENDEDOR ENCONTRADO !"
             return 0
         }
-
-        # Encabezado del archivo de reporte
-        echo -e "REPORTE DE REVENDEDORES\n\nTotal: $_cont_revt  -  $(printf 'Fecha: %(%d/%m/%Y)T\n')\n=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=" >/tmp/Relatorio.txt
-
-        # Itera sobre los revendedores activos (solo revendedores, no sub-revendedores)
+        echo -e "RELATORIO DOS REVENDEDORES\n\nTotal: $_cont_revt  -  $(printf 'Data: %(%d/%m/%Y)T\n')\n=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=" >/tmp/Relatorio.txt
         while read _revlist; do
             _nome_rev="$(echo $_revlist | awk '{print $2}')"
             _limite_rev="$(echo $_revlist | awk '{print $4}')"
             _data_rev="$(echo $_revlist | awk '{print $6}')"
-            
-            # Determina si está activo o suspendido
             [[ -e "/etc/bot/revenda/$_nome_rev/$_nome_rev" ]] && {
                 _dirsts='revenda'
-                _status='Activo'
+                _status='Ativo'
             } || {
                 _dirsts='suspensos'
-                _status='Suspendido'
+                _status='Suspenso'
             }
-            
-            # Cuenta sub-revendedores bajo este revendedor
             _subrev="$(grep -wc SUBREVENDA /etc/bot/$_dirsts/$_nome_rev/$_nome_rev)"
-
-            # Función para contar conexiones por usuario (copiada de monitor_ssh)
             fun_on() {
                 for user in $(ls /etc/bot/$_dirsts/$_nome_rev/usuarios); do
                     [[ $(netstat -nltp | grep 'dropbear' | wc -l) != '0' ]] && drop="$(fun_drop | grep "$user" | wc -l)" || drop=0
@@ -1640,8 +1383,6 @@ relatorio_rev() {
                     echo -e "$conex"
                 done
             }
-            
-            # Calcula el total de usuarios creados y en línea por el revendedor
             [[ "$(ls /etc/bot/$_dirsts/$_nome_rev/usuarios | wc -l)" != '0' ]] && {
                 total_on=$(fun_on | paste -s -d + | bc)
                 total_users=$(ls /etc/bot/$_dirsts/$_nome_rev/usuarios | wc -l)
@@ -1649,98 +1390,69 @@ relatorio_rev() {
                 total_on='0'
                 total_users='0'
             }
-            
-            # Escribe la información en el archivo
-            echo -e "\nESTADO: $_status\nREVENDEDOR: @$_nome_rev\nLÍMITE: $_limite_rev\nDÍAS RESTANTES: $_data_rev\nSSH CREADAS: $total_users\nSSH EN LÍNEA: $total_on\nSUB-REVENDEDORES: $_subrev\n\n=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=" >>/tmp/Relatorio.txt
+            echo -e "\nSTATUS: $_status\nREVENDEDOR: @$_nome_rev\nLIMITE: $_limite_rev\nDIAS RESTANTES: $_data_rev\nSSH CRIADAS: $total_users\nSSH ONLINE: $total_on\nSUB-REVENDAS: $_subrev\n\n=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=" >>/tmp/Relatorio.txt
         done <<<"$(grep -w 'revenda' $ativos)"
-        
-        # 4. Envío del documento
         ShellBot.sendDocument --chat_id $id_admin \
             --document "@/tmp/Relatorio.txt" \
             --caption "$(echo -e "$msg")" \
             --parse_mode html
         return 0
-
-    # Si el usuario es un REVENDEDOR ACTIVO
     elif [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]]; then
-        
-        # Verifica suspensión
         [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
             ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-                --text "⚠️ ¡ESTÁS SUSPENDIDO! CONTACTA AL ADMINISTRADOR"
+                --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
             return 0
         }
-        
-        # --- CASO 1: EL REVENDEDOR NO TIENE SUB-REVENDEDORES ---
         [[ $(grep -wc 'SUBREVENDA' /etc/bot/revenda/${callback_query_from_username}/${callback_query_from_username}) == '0' ]] && {
             ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-                --text "⚠️ ¡NINGÚN SUB-REVENDEDOR ENCONTRADO!"
-                
-            # Muestra solo la información de límite del propio revendedor
+                --text "⚠️ NENHUM SUB REVENDEDOR ENCONTRADO !"
             _cont_limite=$(grep -w ${callback_query_from_username} $ativos | awk '{print $4}')
             fun_verif_limite_rev ${callback_query_from_username}
             _cont_disp=$(echo $_cont_limite - $_result | bc)
             local msg
             msg="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n"
-            msg+="<b>📊 REPORTE | INFORMACIÓN</b>\n"
+            msg+="<b>📊 RELATORIO | INFORMACION</b>\n"
             msg+="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n"
-            msg+="<b>Límite de Logins:</b> $_cont_limite\n"
-            msg+="<b>Límite Disponible:</b> $_cont_disp\n"
+            msg+="<b>Limite de Logins:</b> $_cont_limite\n"
+            msg+="<b>Limite Disponivel:</b> $_cont_disp\n"
             ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
                 --text "$msg" \
                 --parse_mode html
             return 0
         }
-
-        # --- CASO 2: EL REVENDEDOR TIENE SUB-REVENDEDORES ---
-
-        # Función para contar sub-revendedores suspendidos
         fun_contsub() {
             while read _sublist; do
                 _usub="$(echo $_sublist | awk '{print $2}')"
-                # Devuelve 1 si está suspendido, 0 si no
                 echo $(grep -wc $_usub $suspensos)
             done <<<"$(grep -w 'SUBREVENDA' /etc/bot/revenda/${callback_query_from_username}/${callback_query_from_username})"
         }
-        
-        # 1. Recolección de datos del revendedor principal
         _cont_limite=$(grep -w ${callback_query_from_username} $ativos | awk '{print $4}')
         fun_verif_limite_rev ${callback_query_from_username}
         _cont_disp=$(echo $_cont_limite - $_result | bc)
         _cont_atv=$(grep -wc SUBREVENDA /etc/bot/revenda/${callback_query_from_username}/${callback_query_from_username})
-        _cont_sup=$(fun_contsub | paste -s -d + | bc) # Suma el total de sub-revendedores suspendidos
-
-        # 2. Montaje del mensaje inicial (resumen)
+        _cont_sup=$(fun_contsub | paste -s -d + | bc)
         local msg
         msg="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n"
-        msg+="<b>📊 REPORTE | INFORMACIÓN</b>\n"
+        msg+="<b>📊 RELATORIO | INFORMACION</b>\n"
         msg+="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n"
-        msg+="<b>Límite de Logins:</b> $_cont_limite\n"
-        msg+="<b>Límite Disponible:</b> $_cont_disp\n"
-        msg+="<b>Sub-Revendedores Total:</b> $_cont_atv\n"
-        msg+="<b>Sub-Revendedores Suspendidos:</b> $_cont_sup\n"
-        msg+="<b>Usuario:</b> @${callback_query_from_username}\n"
+        msg+="<b>Limite de Logins:</b> $_cont_limite\n"
+        msg+="<b>Limite Disponivel:</b> $_cont_disp\n"
+        msg+="<b>Sub-Revendas Total:</b> $_cont_atv\n"
+        msg+="<b>Sub-Revendas Suspensas:</b> $_cont_sup\n"
+        msg+="<b>User:</b> @${callback_query_from_username}\n"
         msg+="<b>ID:</b> <code>${callback_query_from_id}</code>\n"
-        
-        # 3. Preparación del informe detallado de sub-revendedores
-        echo -e "REPORTE DE SUB-REVENDEDORES\n\nTotal: $_cont_atv  -  $(printf 'Fecha: %(%d/%m/%Y)T\n')\n=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=" >/tmp/Relatorio-${callback_query_from_username}.txt
-
-        # Itera sobre los sub-revendedores del usuario actual
+        echo -e "RELATORIO DOS SUB REVENDEDORES\n\nTotal: $_cont_atv  -  $(printf 'Data: %(%d/%m/%Y)T\n')\n=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=" >/tmp/Relatorio-${callback_query_from_username}.txt
         while read _sublist; do
             _usub="$(echo $_sublist | awk '{print $2}')"
             _limit_sub=$(echo $_sublist | awk '{print $4}')
             _data_sub=$(grep -w $_usub $ativos | awk '{print $6}')
-            
-            # Determina si está activo o suspendido
             [[ -e "/etc/bot/revenda/$_usub/$_usub" ]] && {
                 _dirsts='revenda'
-                _status='Activo'
+                _status='Ativo'
             } || {
                 _dirsts='suspensos'
-                _status='Suspendido'
+                _status='Suspenso'
             }
-            
-            # Función para contar conexiones por usuario (específico para sub-revendedores)
             fun_subon() {
                 for user in $(ls /etc/bot/$_dirsts/$_usub/usuarios); do
                     [[ $(netstat -nltp | grep 'dropbear' | wc -l) != '0' ]] && drop="$(fun_drop | grep "$user" | wc -l)" || drop=0
@@ -1750,112 +1462,87 @@ relatorio_rev() {
                     echo -e "$conex"
                 done
             }
-            
-            # Calcula el total de usuarios creados y en línea por el sub-revendedor
             [[ "$(ls /etc/bot/$_dirsts/$_usub/usuarios | wc -l)" != '0' ]] && {
-                # Se corrige la llamada de fun_on a fun_subon o se asegura que fun_on esté definido
-                # Aquí se asume que fun_on no existe y usamos fun_subon para contar
-                total_on=$(fun_subon | paste -s -d + | bc)
+                total_on=$(fun_on | paste -s -d + | bc)
                 total_users=$(ls /etc/bot/$_dirsts/$_usub/usuarios | wc -l)
             } || {
                 total_on='0'
                 total_users='0'
             }
-            
-            # Escribe la información en el archivo
-            echo -e "\nESTADO: $_status\nSUB-REVENDEDOR: @$_usub\nLÍMITE: $_limit_sub\nDÍAS RESTANTES: $_data_sub\nSSH CREADAS: $total_users\nSSH EN LÍNEA: $total_on\n\n=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=" >>/tmp/Relatorio-${callback_query_from_username}.txt
+            echo -e "\nSTATUS: $_status\nSUB-REVENDEDOR: @$_usub\nLIMITE: $_limit_sub\nDIAS RESTANTES: $_data_sub\nSSH CRIADAS: $total_users\nSSH ONLINE: $total_on\n\n=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=" >>/tmp/Relatorio-${callback_query_from_username}.txt
         done <<<"$(grep -w 'SUBREVENDA' /etc/bot/revenda/${callback_query_from_username}/${callback_query_from_username})"
-        
-        # 4. Envío del documento
         ShellBot.sendDocument --chat_id ${callback_query_message_chat_id[$id]} \
             --document "@/tmp/Relatorio-${callback_query_from_username}.txt" \
             --caption "$(echo -e "$msg")" \
             --parse_mode html
         return 0
-
-    # Si no es administrador ni revendedor activo
     else
+
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "🚫 ACCESO DENEGADO 🚫"
+            --text "🚫 ACESSO NEGADO 🚫"
         return 0
     fi
 }
 
 fun_backauto() {
-    # Solo el administrador puede acceder a esta función
     [[ "${callback_query_from_id[$id]}" = "$id_admin" ]] && {
-        
-        # Si el directorio de backups NO existe (es la primera vez o está desactivado)
         [[ ! -d /etc/SSHPlus/backups ]] && {
             mkdir /etc/SSHPlus/backups
-            # Añade la tarea de backup al cron (si no existe ya)
             [[ $(crontab -l | grep -c "userbackup") = '0' ]] && (
                 crontab -l 2>/dev/null
-                echo "0 */6 * * * /bin/userbackup 1" # Ejecuta userbackup cada 6 horas
+                echo "0 */6 * * * /bin/userbackup 1"
             ) | crontab -
-            s # El 's' aquí parece ser un error de script o un comando no estándar. Asumo que es un error tipográfico.
+            s
             ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-                --text "♻️ BACKUP AUTOMÁTICO ACTIVADO 🟢"
+                --text "♻️ BACKUP AUTOMATICO ATIVADO 🟢"
             return 0
-            
         } || {
-            # Si el directorio de backups SÍ existe (está activado), lo desactiva
-            # Elimina la tarea del cron
             [[ $(crontab -l | grep -c "userbackup") != '0' ]] && crontab -l | grep -v 'userbackup' | crontab -
-            # Elimina el directorio de backups
             [[ -d /etc/SSHPlus/backups ]] && rm -rf /etc/SSHPlus/backups
             ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-                --text "♻️ BACKUP AUTOMÁTICO DESACTIVADO 🔴"
+                --text "♻️ BACKUP AUTOMATICO DESATIVADO 🔴"
             return 0
         }
     }
 }
 
 backup_auto() {
-    # Envía el archivo de backup automático al administrador
     ShellBot.sendDocument --chat_id $id_admin \
         --document "@/etc/SSHPlus/backups/backup.vps" \
-        --caption "$(echo -e "♻️ BACKUP AUTOMÁTICO ♻️")"
-    # Elimina el archivo después de enviarlo
+        --caption "$(echo -e "♻️ BACKUP AUTOMATICO ♻️")"
     rm /etc/SSHPlus/backups/backup.vps
     return 0
 }
 
 restaure_backup() {
-    # Solo el administrador puede restaurar
     [[ ${message_from_id[$id]} == ${id_admin} ]] && {
-        # Verifica que el nombre del archivo sea exactamente 'backup.vps'
         [[ "${message_document_file_name}" != 'backup.vps' ]] && return 0
         local file_id
         file_id=${message_document_file_id[$id]}
         if [[ $file_id ]]; then
-            # Limpia archivos temporales anteriores
             [[ -e /tmp/backup.vps ]] && rm /tmp/backup.vps
             [[ "$(ls /tmp | grep -c '.vps')" != '0' ]] && {
                 for i in $(ls /tmp | grep '.vps'); do
                     rm /tmp/$i
                 done
             }
-            # Descarga el archivo
             ShellBot.getFile --file_id $file_id
             if ShellBot.downloadFile --file_path "${return[file_path]}" --dir "/tmp"; then
-                msg='<b>♻️ ARCHIVO DE COPIA DE SEGURIDAD ♻️</b>\n\n<i>¡El archivo enviado es un archivo\nde copia de seguridad de usuarios!</i>'
+                msg='<b>♻️ ARQUIVO DE BACKUP ♻️</b>\n\n<i>O arquivo enviado é um arquivo\nde backup de usuários!</i>'
                 ShellBot.sendMessage --chat_id ${id_admin} \
                     --text "$(echo -e "$msg")" \
                     --parse_mode html
-                # Pide confirmación para restaurar
                 ShellBot.sendMessage --chat_id ${id_admin} \
-                    --text '¿Desea restaurar? [si | no]' \
+                    --text 'Deseja restaurar ? [sim | nao]' \
                     --reply_markup "$(ShellBot.ForceReply)"
             fi
         fi
         return 0
     }
 }
-
 msg_bot() {
     local msg
-    msg="🤖 \n\n" # El cuerpo está vacío, solo el emoji.
+    msg="🤖 \n\n"
     ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
         --text "$(echo -e $msg)" \
         --parse_mode html
@@ -1864,9 +1551,9 @@ msg_bot() {
 
 msg_bem_vindo() {
     local msg
-    msg="✌️😃 Hola <b>${message_from_first_name[$id]}</b>\n\nBIENVENIDO(a)\n\n"
-    msg+="Para acceder al menú\nhaz clic o ejecuta [ /menu ]\n\n"
-    msg+="Para obtener información\nhaz clic o ejecuta [ /ayuda ]\n\n"
+    msg="✌️😃 Ola <b>${message_from_first_name[$id]}</b>\n\nSEJA BEM VINDO(a)\n\n"
+    msg+="Para acessar o menu\nclick ou execute [ /menu ]\n\n"
+    msg+="Para obter informacoes\nclick ou execute [ /ajuda ]\n\n"
     ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
         --text "$(echo -e $msg)" \
         --parse_mode html
@@ -1874,70 +1561,52 @@ msg_bem_vindo() {
 }
 
 fun_verif_limite_rev() {
-    _userrev=$1 # Nombre de usuario del revendedor/sub-revendedor
-    
-    # Si es un REVENDEDOR
+    _userrev=$1
     [[ "$(grep -w "$_userrev" $ativos | awk '{print $NF}')" == 'revenda' ]] && {
         echo $_userrev
-        
-        # Suma los límites de todos sus SUB-REVENDEDORES
         [[ $(grep -wc 'SUBREVENDA' /etc/bot/revenda/$_userrev/$_userrev) != '0' ]] && {
             _limsomarev=$(grep -w 'SUBREVENDA' /etc/bot/revenda/$_userrev/$_userrev | awk {'print $4'} | paste -s -d + | bc)
         } || {
             _limsomarev='0'
         }
-        
-        # Suma los límites de los USUARIOS creados directamente por el REVENDEDOR
         [[ $(ls /etc/bot/revenda/$_userrev/usuarios | wc -l) != '0' ]] && {
             _mlim1='0'
             _meus_users="/etc/bot/revenda/$_userrev/usuarios"
             for _user_ in $(ls $_meus_users); do
-                _mlim2=$(cat $_meus_users/$_user_ | awk -F : {'print $4'}) # Límite del usuario
+                _mlim2=$(cat $_meus_users/$_user_ | awk -F : {'print $4'})
                 _mlim1=$(echo "${_mlim1} + ${_mlim2}" | bc)
             done
         }
-        
         [[ -z "$_mlim1" ]] && _mlim1='0'
-        
-        # Resultado final: Límite usado por Sub-revendedores + Límite usado por usuarios propios
         _result=$(echo "${_limsomarev} + ${_mlim1}" | bc)
     }
-    
-    # Si es un SUB-REVENDEDOR
     [[ "$(grep -w "$_userrev" $ativos | awk '{print $NF}')" == 'subrevenda' ]] && {
-        
-        # Suma los límites de los USUARIOS creados directamente por el SUB-REVENDEDOR
         [[ "$(ls /etc/bot/revenda/$_userrev/usuarios | wc -l)" != '0' ]] && {
             _dir_users="/etc/bot/revenda/$_userrev/usuarios"
             _lim1='0'
             for i in $(ls $_dir_users); do
-                _lim2=$(cat $_dir_users/$i | awk -F : {'print $4'}) # Límite del usuario
+                _lim2=$(cat $_dir_users/$i | awk -F : {'print $4'})
                 _lim1=$(echo "${_lim1} + ${_lim2}" | bc)
             done
         }
-        
         [[ -z "$_lim1" ]] && _lim1='0'
-        
-        # Resultado final: Límite usado por usuarios propios
         _result=$(echo "${_lim1}")
     }
 }
 
 fun_add_revenda() {
-    # Verifica suspensión
     [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "⚠️ ¡ESTÁS SUSPENDIDO! CONTACTA AL ADMINISTRADOR"
+            --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
         return 0
     }
-    # Solo el administrador o un revendedor activo pueden añadir
     [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "👥 AÑADIR REVENDEDOR 👥\n\nIndica el nombre:" \
+            --text "👥 ADICIONAR REVENDEDOR 👥\n\nInforme o nome:" \
             --reply_markup "$(ShellBot.ForceReply)"
     } || {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "🚫 ACCESO DENEGADO 🚫"
+            --text "🚫 ACESSO NEGADO 🚫"
         return 0
     }
 }
@@ -1946,195 +1615,160 @@ criar_rev() {
     file_rev=$1
     [[ -z "$file_rev" ]] && {
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e Error)"
+            --text "$(echo -e Erro)"
         _erro='1'
-        break # Esto es peligroso fuera de un bucle, asumo que es un error original del script.
+        break
     }
-    
-    # Extrae los datos del archivo temporal generado por el bot
-    n_rev=$(sed -n '1 p' $file_rev | cut -d' ' -f2) # Nombre
-    u_rev=$(sed -n '2 p' $file_rev | awk -F '@' {'print $2'}) # Username (sin @)
-    l_rev=$(sed -n '3 p' $file_rev | cut -d' ' -f2) # Límite
-    d_rev=$(sed -n '4 p' $file_rev | cut -d' ' -f2) # Días
-    
-    # Determina si es un Revendedor o Sub-revendedor
+    n_rev=$(sed -n '1 p' $file_rev | cut -d' ' -f2)
+    u_rev=$(sed -n '2 p' $file_rev | awk -F '@' {'print $2'})
+    l_rev=$(sed -n '3 p' $file_rev | cut -d' ' -f2)
+    d_rev=$(sed -n '4 p' $file_rev | cut -d' ' -f2)
     [[ "${message_from_id[$id]}" = "$id_admin" ]] && {
         t_rev='revenda'
     } || {
         t_rev='subrevenda'
-        # Si es sub-revendedor, registra en el archivo del revendedor principal
         echo -e "SUBREVENDA: $u_rev LIMITE_SUBREVENDA: $l_rev" >>/etc/bot/revenda/${message_from_username}/${message_from_username}
     }
-    
-    # Crea la estructura de directorios
     mkdir /etc/bot/revenda/"$u_rev"
     mkdir /etc/bot/revenda/"$u_rev"/usuarios
     touch /etc/bot/revenda/"$u_rev"/$u_rev
-    
-    # Registra en la lista de activos
     echo -e "USER: $u_rev LIMITE: $l_rev DIAS: $d_rev TIPO: $t_rev" >>$ativos
-    
-    # Escribe la información de límite en el archivo de control del revendedor
     echo -e "=========================\nLIMITE_REVENDA: $l_rev\nDIAS_REVENDA: $d_rev\n=========================\n" >/etc/bot/revenda/"$u_rev"/$u_rev
-    
-    # Agrega la fecha de vencimiento al archivo temporal para el mensaje de confirmación
-    sed -i '$d' $file_rev # Elimina la última línea (que asumo es temporal)
-    echo -e "Vencimiento: $(date "+%d/%m/%Y" -d "+$d_rev days")" >>$file_rev
+    sed -i '$d' $file_rev
+    echo -e "Vencimento: $(date "+%d/%m/%Y" -d "+$d_rev days")" >>$file_rev
 }
 
 fun_del_rev() {
-    # Verifica suspensión
     [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "⚠️ ¡ESTÁS SUSPENDIDO! CONTACTA AL ADMINISTRADOR"
+            --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
         return 0
     }
-    # Solo el administrador o un revendedor activo pueden eliminar
     [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "🗑 ELIMINAR REVENDEDOR 🗑\n\nIndica su usuario [Ej: @Nombre Del Usuario]:" \
+            --text "🗑 REMOVER REVENDEDOR 🗑\n\nInforme o user dele [Ex: @Nome Do Usuario]:" \
             --reply_markup "$(ShellBot.ForceReply)"
     } || {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "🚫 ACCESO DENEGADO 🚫"
+            --text "🚫 ACESSO NEGADO 🚫"
         return 0
     }
 }
 
 del_rev() {
-    _cli_rev=$1 # Username del revendedor/sub-revendedor a eliminar
+    _cli_rev=$1
     [[ -z "$_cli_rev" ]] && {
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e "Error")"
+            --text "$(echo -e "Erro")"
         return 0
     }
-    
-    # --- LÓGICA DEL ADMINISTRADOR ---
     [[ "${message_from_id[$id]}" == "$id_admin" ]] && {
         [[ "$(grep -wc "$_cli_rev" $ativos)" != '0' ]] && {
-            
-            # 1. Determina si el revendedor está activo o suspendido
             [[ -e "/etc/bot/revenda/$_cli_rev/$_cli_rev" ]] && _dirsts='revenda' || _dirsts='suspensos'
-            
-            # 2. Si el revendedor tiene SUB-REVENDEDORES, los elimina primero
             [[ "$(grep -wc 'SUBREVENDA' /etc/bot/$_dirsts/$_cli_rev/$_cli_rev)" != '0' ]] && {
                 while read _listsub2; do
-                    _usub="$(echo $_listsub2 | awk '{print $2}')" # Sub-revendedor
+                    _usub="$(echo $_listsub2 | awk '{print $2}')"
                     [[ -e "/etc/bot/revenda/$_usub/$_usub" ]] && _dirsts2='revenda' || _dirsts2='suspensos'
                     _dir_users="/etc/bot/$_dirsts2/$_usub/usuarios"
-                    
-                    # Elimina los usuarios creados por el sub-revendedor
                     [[ "$(ls $_dir_users | wc -l)" != '0' ]] && {
                         for _user in $(ls $_dir_users); do
                             piduser=$(ps -u "$_user" | grep sshd | cut -d? -f1)
-                            kill -9 $piduser >/dev/null 2>&1 # Mata sesiones activas
-                            userdel --force "$_user" 2>/dev/null # Elimina usuario SSH
-                            grep -v ^$_user[[:space:]] /root/usuarios.db >/tmp/ph; cat /tmp/ph >/root/usuarios.db # Elimina de la DB
-                            rm /etc/bot/info-users/$_user # Elimina info
+                            kill -9 $piduser >/dev/null 2>&1
+                            userdel --force "$_user" 2>/dev/null
+                            grep -v ^$_user[[:space:]] /root/usuarios.db >/tmp/ph
+                            cat /tmp/ph >/root/usuarios.db
+                            rm /etc/bot/info-users/$_user
                         done
                     }
-                    # Elimina la carpeta del sub-revendedor y lo remueve de las listas
                     [[ -d /etc/bot/$_dirsts2/$_usub ]] && rm -rf /etc/bot/$_dirsts2/$_usub >/dev/null 2>&1
                     sed -i "/\b$_usub\b/d" $ativos
-                    [[ $(grep -wc "$_usub" $suspensos) != '0' ]] && { sed -i "/\b$_usub\b/d" $suspensos; }
+                    [[ $(grep -wc "$_usub" $suspensos) != '0' ]] && {
+                        sed -i "/\b$_usub\b/d" $suspensos
+                    }
                 done <<<"$(grep -w 'SUBREVENDA' /etc/bot/$_dirsts/$_cli_rev/$_cli_rev)"
             }
-            
-            # 3. Elimina los usuarios creados directamente por el REVENDEDOR
             [[ "$(ls /etc/bot/$_dirsts/$_cli_rev/usuarios | wc -l)" != '0' ]] && {
                 for _user in $(ls /etc/bot/$_dirsts/$_cli_rev/usuarios); do
                     piduser=$(ps -u "$_user" | grep sshd | cut -d? -f1)
                     kill -9 $piduser >/dev/null 2>&1
                     userdel --force "$_user" 2>/dev/null
-                    grep -v ^$_user[[:space:]] /root/usuarios.db >/tmp/ph; cat /tmp/ph >/root/usuarios.db
+                    grep -v ^$_user[[:space:]] /root/usuarios.db >/tmp/ph
+                    cat /tmp/ph >/root/usuarios.db
                     rm /etc/bot/info-users/$_user
                 done
             }
-            
-            # 4. Elimina la carpeta del REVENDEDOR y lo remueve de las listas
             [[ -d /etc/bot/$_dirsts/$_cli_rev ]] && rm -rf /etc/bot/$_dirsts/$_cli_rev >/dev/null 2>&1
             sed -i "/\b$_cli_rev\b/d" $ativos
-            [[ $(grep -wc "$_cli_rev" $suspensos) != '0' ]] && { sed -i "/\b$_cli_rev\b/d" $suspensos; }
-            
+            [[ $(grep -wc "$_cli_rev" $suspensos) != '0' ]] && {
+                sed -i "/\b$_cli_rev\b/d" $suspensos
+            }
             ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-                --text "$(echo -e "ELIMINADO CON ÉXITO")" \
+                --text "$(echo -e "REMOVIDO COM SUCESSO")" \
                 --parse_mode html
             return 0
         } || {
             ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-                --text "$(echo -e ❌ ¡REVENDEDOR NO EXISTE! ❌)"
+                --text "$(echo -e ❌ REVENDEDEDOR NAO EXISTE ❌)"
             return 0
         }
-    } 
-    # --- LÓGICA DEL REVENDEDOR (eliminando solo sus sub-revendedores) ---
-    || { 
-        # Verifica si el sub-revendedor pertenece a este revendedor principal
+    } || {
         [[ "$(grep -wc "$_cli_rev" /etc/bot/revenda/${message_from_username}/${message_from_username})" != '0' ]] && {
-            
-            # Caso 1: El sub-revendedor está activo
             [[ -d /etc/bot/revenda/$_cli_rev ]] && {
-                # Elimina usuarios del sub-revendedor
                 [[ "$(ls /etc/bot/revenda/$_cli_rev/usuarios | wc -l)" != '0' ]] && {
                     for _user in $(ls /etc/bot/revenda/$_cli_rev/usuarios); do
                         piduser=$(ps -u "$_user" | grep sshd | cut -d? -f1)
                         kill -9 $piduser >/dev/null 2>&1
                         userdel --force "$_user" 2>/dev/null
-                        grep -v ^$_user[[:space:]] /root/usuarios.db >/tmp/ph; cat /tmp/ph >/root/usuarios.db
+                        grep -v ^$_user[[:space:]] /root/usuarios.db >/tmp/ph
+                        cat /tmp/ph >/root/usuarios.db
                         rm /etc/bot/info-users/$_user
                     done
                 }
-                # Elimina la carpeta y registros
                 [[ -d /etc/bot/revenda/$_cli_rev ]] && rm -rf /etc/bot/revenda/$_cli_rev >/dev/null 2>&1
                 sed -i "/\b$_cli_rev\b/d" $ativos
-                sed -i "/\b$_cli_rev\b/d" /etc/bot/revenda/${message_from_username}/${message_from_username} # Elimina del registro del revendedor principal
+                sed -i "/\b$_cli_rev\b/d" /etc/bot/revenda/${message_from_username}/${message_from_username}
             }
-            
-            # Caso 2: El sub-revendedor está suspendido
             [[ -d /etc/bot/suspensos/$_cli_rev ]] && {
-                # Elimina usuarios del sub-revendedor
                 [[ "$(ls /etc/bot/suspensos/$_cli_rev/usuarios | wc -l)" != '0' ]] && {
                     for _user in $(ls /etc/bot/suspensos/$_cli_rev/usuarios); do
                         piduser=$(ps -u "$_user" | grep sshd | cut -d? -f1)
                         kill -9 $piduser >/dev/null 2>&1
                         userdel --force "$_user" 2>/dev/null
-                        grep -v ^$_user[[:space:]] /root/usuarios.db >/tmp/ph; cat /tmp/ph >/root/usuarios.db
+                        grep -v ^$_user[[:space:]] /root/usuarios.db >/tmp/ph
+                        cat /tmp/ph >/root/usuarios.db
                         rm /etc/bot/info-users/$_user
                     done
                 }
-                # Elimina la carpeta y registros
                 [[ -d /etc/bot/suspensos/$_cli_rev ]] && rm -rf /etc/bot/suspensos/$_cli_rev >/dev/null 2>&1
                 sed -i "/\b$_cli_rev\b/d" $ativos
                 sed -i "/\b$_cli_rev\b/d" $suspensos
-                sed -i "/\b$_cli_rev\b/d" /etc/bot/revenda/${message_from_username}/${message_from_username} # Elimina del registro del revendedor principal
+                sed -i "/\b$_cli_rev\b/d" /etc/bot/revenda/${message_from_username}/${message_from_username}
             }
-            
             ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-                --text "$(echo -e "ELIMINADO CON ÉXITO")" \
+                --text "$(echo -e "REMOVIDO COM SUCESSO")" \
                 --parse_mode html
             return 0
         } || {
             ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-                --text "$(echo -e ❌ ¡REVENDEDOR NO EXISTE! ❌)"
+                --text "$(echo -e ❌ REVENDEDEDOR NAO EXISTE ❌)"
             return 0
         }
     }
 }
 
 fun_lim_rev() {
-    # Verifica suspensión
     [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "⚠️ ¡ESTÁS SUSPENDIDO! CONTACTA AL ADMINISTRADOR"
+            --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
         return 0
     }
-    # Solo el administrador o un revendedor activo pueden acceder
     [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "♾ MODIFICAR LÍMITE DE REVENTA ♾\n\nIndica su usuario [Ej: @Nombre Del Usuario]:" \
+            --text "♾ ALTERAR LIMITE REVENDA ♾\n\nInforme o user dele [Ex: @Nome Do Usuario]:" \
             --reply_markup "$(ShellBot.ForceReply)"
     } || {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "🚫 ACCESO DENEGADO 🚫"
+            --text "🚫 ACESSO NEGADO 🚫"
         return 0
     }
 }
@@ -2143,40 +1777,24 @@ lim_rev() {
     _file_lim=$1
     [[ -z "$_file_lim" ]] && {
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e "Error")"
+            --text "$(echo -e "Erro")"
         return 0
     }
-    
     _rev_usern=$(grep -w 'Revendedor' $_file_lim | awk -F '@' {'print $2'})
     new_l=$(grep -w 'Limite' $_file_lim | awk {'print $2'})
-    
-    # Si el revendedor está ACTIVO
     [[ -d /etc/bot/revenda/$_rev_usern ]] && {
         l_old=$(grep -w 'LIMITE_REVENDA' /etc/bot/revenda/$_rev_usern/$_rev_usern | awk {'print $2'})
-        
-        # Actualiza el límite en el archivo de control del revendedor
         sed -i "/LIMITE_REVENDA/ s/$l_old/$new_l/g" /etc/bot/revenda/$_rev_usern/$_rev_usern
-        # Actualiza el límite en la lista de activos
         sed -i "/$_rev_usern/ s/LIMITE: $l_old/LIMITE: $new_l/" $ativos
-        
-        # Si no es el administrador, actualiza el registro en el archivo del revendedor principal
         [[ "${message_from_id[$id]}" != "$id_admin" ]] && {
             sed -i "/\b$_rev_usern\b/ s/$l_old/$new_l/g" /etc/bot/revenda/${message_from_username}/${message_from_username}
         }
         echo $_rev_usern
-        
-    # Si el revendedor está SUSPENDIDO
     } || {
         l_old=$(grep -w 'LIMITE_REVENDA' /etc/bot/suspensos/$_rev_usern/$_rev_usern | awk {'print $2'})
-        
-        # Actualiza el límite en el archivo de control del revendedor (suspendido)
         sed -i "/LIMITE_REVENDA/ s/$l_old/$new_l/g" /etc/bot/suspensos/$_rev_usern/$_rev_usern
-        # Actualiza el límite en la lista de activos (aunque esté suspendido, el registro está ahí)
         sed -i "/\b$_rev_usern\b/ s/LIMITE: $l_old/LIMITE: $new_l/" $ativos
-        # Actualiza el límite en la lista de suspendidos
         sed -i "/\b$_rev_usern\b/ s/LIMITE: $l_old/LIMITE: $new_l/" $suspensos
-        
-        # Si no es el administrador, actualiza el registro en el archivo del revendedor principal
         [[ "${message_from_id[$id]}" != "$id_admin" ]] && {
             sed -i "/\b$_rev_usern\b/ s/$l_old/$new_l/" /etc/bot/revenda/${message_from_username}/${message_from_username}
         }
@@ -2185,20 +1803,18 @@ lim_rev() {
 }
 
 fun_dat_rev() {
-    # Verifica suspensión
     [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "⚠️ ¡ESTÁS SUSPENDIDO! CONTACTA AL ADMINISTRADOR"
+            --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
         return 0
     }
-    # Solo el administrador o un revendedor activo pueden acceder
     [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "📆 MODIFICAR FECHA DE REVENTA 📆\n\nIndica su usuario [Ej: @Nombre Del Usuario]:" \
+            --text "📆 ALTERAR FECHA REVENDA 📆\n\nInforme o user dele [Ex: @Nome Do Usuario]:" \
             --reply_markup "$(ShellBot.ForceReply)"
     } || {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "🚫 ACCESO DENEGADO 🚫"
+            --text "🚫 ACESSO NEGADO 🚫"
         return 0
     }
 }
@@ -2207,148 +1823,110 @@ dat_rev() {
     _datfile=$1
     [[ -z "$_datfile" ]] && {
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e "Error")"
+            --text "$(echo -e "Erro")"
         _erro='1'
         return 0
     }
-    
     _revd=$(grep -w 'Revendedor' $_datfile | cut -d'@' -f2)
-    new_d=$(grep -w 'Data' $_datfile | awk '{print $NF}') # Nuevos días de duración
-    
-    # Si el revendedor está SUSPENDIDO (se reactivará)
+    new_d=$(grep -w 'Data' $_datfile | awk '{print $NF}')
     [[ -d "/etc/bot/suspensos/$_revd" ]] && {
-        
-        # 1. Desuspende los usuarios SSH del revendedor
         [[ "$(ls /etc/bot/suspensos/$_revd/usuarios | wc -l)" != '0' ]] && {
             for _user in $(ls /etc/bot/suspensos/$_revd/usuarios); do
-                usermod -U $_user # Desbloquea el usuario SSH
+                usermod -U $_user
             done
         }
-        
-        # 2. Actualiza los días en los archivos de control y lista de activos
         d_old=$(grep -w 'DIAS_REVENDA' /etc/bot/suspensos/$_revd/$_revd | awk {'print $2'})
         sed -i "/\b$_revd\b/ s/DIAS: $d_old/DIAS: $new_d/" $ativos
         sed -i "/DIAS_REVENDA/ s/$d_old/$new_d/" /etc/bot/suspensos/$_revd/$_revd
-        
-        # 3. Mueve y desuspende a los SUB-REVENDEDORES del revendedor principal
         [[ "$(grep -wc 'SUBREVENDA' /etc/bot/suspensos/$_revd/$_revd)" != '0' ]] && {
             while read _listsub; do
                 _usub="$(echo $_listsub | awk '{print $2}')"
-                
-                # Desuspende los usuarios SSH de cada sub-revendedor
                 [[ "$(ls /etc/bot/suspensos/$_usub/usuarios | wc -l)" != '0' ]] && {
                     for _user in $(ls /etc/bot/suspensos/$_usub/usuarios); do
                         usermod -U $_user
                     done
                 }
-                mv /etc/bot/suspensos/$_usub /etc/bot/revenda/$_usub # Mueve la carpeta
-                sed -i "/\b$_usub\b/d" $suspensos # Elimina de la lista de suspendidos
+                mv /etc/bot/suspensos/$_usub /etc/bot/revenda/$_usub
+                sed -i "/\b$_usub\b/d" $suspensos
             done <<<"$(grep -w 'SUBREVENDA' /etc/bot/suspensos/$_revd/$_revd)"
         }
-        
-        # 4. Mueve al revendedor principal y lo desuspende
         mv /etc/bot/suspensos/$_revd /etc/bot/revenda/$_revd
         sed -i "/\b$_revd\b/d" $suspensos
-        
-        # 5. Envía confirmación
-        sed -i "s;$new_d;$(date "+%d/%m/%Y" -d "+$new_d days");" $_datfile # Actualiza el archivo temporal para el mensaje final
+        sed -i "s;$new_d;$(date "+%d/%m/%Y" -d "+$new_d days");" $_datfile
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e "⚠️ $_revd ESTABA SUSPENDIDO Y FUE REACTIVADO !")" \
+            --text "$(echo -e "⚠️ $_revd ESTAVA SUSPENSO E FOI REATIVADO !")" \
             --parse_mode html
-            
-    # Si el revendedor está ACTIVO (solo extiende la fecha)
     } || {
         d_old=$(grep -w 'DIAS_REVENDA' /etc/bot/revenda/$_revd/$_revd | awk {'print $2'})
-        
-        # Actualiza los días en la lista de activos
         sed -i "/\b$_revd\b/ s/DIAS: $d_old/DIAS: $new_d/" $ativos
-        # Actualiza los días en el archivo de control del revendedor
         sed -i "/DIAS_REVENDA/ s/$d_old/$new_d/" /etc/bot/revenda/$_revd/$_revd
-        
-        # Actualiza el archivo temporal para el mensaje final (muestra la nueva fecha de vencimiento)
         sed -i "s;$new_d;$(date "+%d/%m/%Y" -d "+$new_d days");" $_datfile
     }
 }
 
 fun_list_rev() {
-    # Verifica suspensión
     [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "⚠️ ¡ESTÁS SUSPENDIDO! CONTACTA AL ADMINISTRADOR"
+            --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
         return 0
     }
-    
-    # --- LÓGICA DEL ADMINISTRADOR ---
     if [[ "${callback_query_from_id[$id]}" == "$id_admin" ]]; then
         local msg1
-        msg1="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n📃 LISTA DE REVENDEDORES\n=×=×=×=×=×=×=×=×=×=×=×=×=×=\n"
-        
-        # Si existen revendedores activos
+        msg1="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n📃 LISTA DE REVENDEDORES !\n=×=×=×=×=×=×=×=×=×=×=×=×=×=\n"
         [[ "$(grep -wc 'revenda' $ativos)" != '0' ]] && {
             while read _atvs; do
-                _uativ="$(echo $_atvs | awk '{print $2}')" # Nombre de usuario del revendedor
-                # Verifica si el revendedor está en la lista de suspendidos
-                [[ "$(grep -wc "$_uativ" $suspensos)" == '0' ]] && _stsrev='ACTIVO' || _stsrev='SUSPENDIDO'
+                _uativ="$(echo $_atvs | awk '{print $2}')"
+                [[ "$(grep -wc "$_uativ" $suspensos)" == '0' ]] && _stsrev='ATIVO' || _stsrev='SUSPENSO'
                 msg1+="• @$_uativ - $_stsrev\n"
-            done <<<"$(grep -w 'revenda' /etc/bot/lista_ativos)" # Lee la lista de activos
-            
+            done <<<"$(grep -w 'revenda' /etc/bot/lista_ativos)"
             ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
                 --text "$(echo -e "$msg1")" \
                 --parse_mode html
             return 0
         } || {
             ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-                --text "NO TIENES REVENDEDORES"
+                --text "VC NAO TEM REVENDEDORES"
             return 0
         }
-        
-    # --- LÓGICA DEL REVENDEDOR (Mostrar Sub-revendedores) ---
     elif [[ "$(grep -w ${callback_query_from_username} $ativos | awk '{print $NF}')" == 'revenda' ]]; then
         _patch="/etc/bot/revenda"
         local msg1
-        msg1="=×=×=×=×=×=×=×=×=×=×=×=×=\n📃 LISTA DE SUB-REVENDEDORES\n=×=×=×=×=×=×=×=×=×=×=×=×=\n"
-        
-        # Si el revendedor tiene sub-revendedores registrados
+        msg1="=×=×=×=×=×=×=×=×=×=×=×=×=\n📃 LISTA DE SUB REVENDEDORES !\n=×=×=×=×=×=×=×=×=×=×=×=×=\n"
         [[ "$(grep -wc "SUBREVENDA" $_patch/${callback_query_from_username}/${callback_query_from_username})" != '0' ]] && {
             while read _listsub; do
                 _usub="$(echo $_listsub | awk '{print $2}')"
-                [[ "$(grep -wc "$_usub" $suspensos)" == '0' ]] && _usts='ACTIVO' || _usts='SUSPENDIDO'
+                [[ "$(grep -wc "$_usub" $suspensos)" == '0' ]] && _usts='ATIVO' || _usts='SUSPENSO'
                 msg1+="• @$_usub - $_usts\n"
-            done <<<"$(grep -w 'SUBREVENDA' $_patch/${callback_query_from_username}/${callback_query_from_username})" # Lee el archivo de control del revendedor
-            
+            done <<<"$(grep -w 'SUBREVENDA' $_patch/${callback_query_from_username}/${callback_query_from_username})"
             ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
                 --text "$(echo -e "$msg1")" \
                 --parse_mode html
             return 0
         } || {
             ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-                --text "NO TIENES SUB-REVENDEDORES"
+                --text "VC NAO TEM SUB REVENDEDORES"
             return 0
         }
-        
-    # --- ACCESO DENEGADO ---
     else
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "🚫 ACCESO DENEGADO 🚫"
+            --text "🚫 ACESSO NEGADO 🚫"
         return 0
     fi
 }
 
 fun_ativar_rev() {
-    # Verifica suspensión
     [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "⚠️ ¡ESTÁS SUSPENDIDO! CONTACTA AL ADMINISTRADOR"
+            --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
         return 0
     }
-    # Solo el administrador o un revendedor activo pueden acceder
     [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "🔒 ACTIVAR REVENDEDOR 🔒\n\nIndica su usuario [Ej: @Nombre Del Usuario]:" \
+            --text "🔒 ATIVAR REVENDEDOR 🔒\n\nInforme o user dele [Ex: @Nome Do Usuario]:" \
             --reply_markup "$(ShellBot.ForceReply)"
     } || {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "🚫 ACCESO DENEGADO 🚫"
+            --text "🚫 ACESSO NEGADO 🚫"
         return 0
     }
 }
@@ -2357,87 +1935,74 @@ ativar_rev() {
     _revs=$1
     [[ -z "$_revs" ]] && {
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e "Error")"
+            --text "$(echo -e "Erro")"
         return 0
     }
-    
-    # Verifica que el usuario a activar esté efectivamente suspendido
     [[ ! -d "/etc/bot/suspensos/$_revs" ]] && {
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e "¡EL USUARIO NO ESTÁ SUSPENDIDO!")" \
+            --text "$(echo -e "O USUARIO NAO ESTA SUSPENSO !")" \
             --parse_mode html
         return 0
     }
-    
-    # Doble verificación (redundante, pero mantenida)
     [[ ! -d "/etc/bot/suspensos/$_revs" ]] && {
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e "¡EL USUARIO NO EXISTE!")" \
+            --text "$(echo -e "O USUARIO NAO EXISTE !")" \
             --parse_mode html
         return 0
     }
 
-    # --- LÓGICA DE ACTIVACIÓN (solo para el ADMINISTRADOR) ---
     [[ "${message_from_id[$id]}" == "$id_admin" ]] && {
-        
-        # 1. Verifica y activa SUB-REVENDEDORES si los tiene
+        # Verifica se existem subrevendedores
         [[ "$(grep -wc 'SUBREVENDA' /etc/bot/suspensos/$_revs/$_revs)" != '0' ]] && {
             while read _listsub3; do
                 _usub3="$(echo $_listsub3 | awk '{print $2}')"
                 _dir_users="/etc/bot/suspensos/$_usub3/usuarios"
-                
-                # Desbloquea los usuarios SSH del sub-revendedor
                 [[ "$(ls $_dir_users | wc -l)" != '0' ]] && {
                     for _user in $(ls $_dir_users); do
-                        usermod -U $_user
+                        usermod -U $_user  # Desbloqueia o usuário
                     done
                 }
-                mv /etc/bot/suspensos/$_usub3 /etc/bot/revenda/$_usub3 # Mueve la carpeta a activos
-                grep -w "$_usub3" $suspensos >> $ativos # Agrega la línea de suspensión a la lista de activos
+                mv /etc/bot/suspensos/$_usub3 /etc/bot/revenda/$_usub3
+                grep -w "$_usub3" $suspensos >> $ativos
             done <<<"$(grep -w 'SUBREVENDA' /etc/bot/suspensos/$_revs/$_revs)"
         }
-        
-        # 2. Activa el REVENDEDOR PRINCIPAL
-        # Desbloquea los usuarios SSH del revendedor
+        # Ativa o revendedor
         [[ "$(ls /etc/bot/suspensos/$_revs/usuarios | wc -l)" != '0' ]] && {
             for _user_ in $(ls /etc/bot/suspensos/$_revs/usuarios); do
-                usermod -U $_user_
+                usermod -U $_user_  # Desbloqueia o usuário
             done
         }
-        mv /etc/bot/suspensos/$_revs /etc/bot/revenda/$_revs # Mueve la carpeta a activos
+        mv /etc/bot/suspensos/$_revs /etc/bot/revenda/$_revs
         
-        # 3. Elimina el revendedor de la lista de suspendidos
+        
+        # Remove o revendedor da lista de suspensos
         sed -i "/\b$_revs\b/d" $suspensos
         
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e "ACTIVADO CON ÉXITO")" \
+            --text "$(echo -e "ATIVADO COM SUCESSO")" \
             --parse_mode html
         return 0
-        
-    # --- ACCESO DENEGADO (Revendedores no pueden activar otros) ---
     } || {
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e "ACCESO DENEGADO")" \
+            --text "$(echo -e "ACESSO NEGADO")" \
             --parse_mode html
         return 0
     }
 }
 
 fun_susp_rev() {
-    # Verifica suspensión del usuario que ejecuta el comando
     [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "⚠️ ¡ESTÁS SUSPENDIDO! CONTACTA AL ADMINISTRADOR"
+            --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
         return 0
     }
-    # Solo el administrador o un revendedor activo pueden acceder
     [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
-            --text "🔒 SUSPENDER REVENDEDOR 🔒\n\nIndica su usuario [Ej: @Nombre Del Usuario]:" \
+            --text "🔒 SUSPENDER REVENDEDOR 🔒\n\nInforme o user dele [Ex: @Nome Do Usuario]:" \
             --reply_markup "$(ShellBot.ForceReply)"
     } || {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "🚫 ACCESO DENEGADO 🚫"
+            --text "🚫 ACESSO NEGADO 🚫"
         return 0
     }
 }
@@ -2446,85 +2011,65 @@ susp_rev() {
     _revs=$1
     [[ -z "$_revs" ]] && {
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e "Error")"
+            --text "$(echo -e "Erro")"
         return 0
     }
-    
-    # Verifica si el usuario ya está suspendido
     [[ -d "/etc/bot/suspensos/$_revs" ]] && {
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e "¡EL USUARIO YA ESTÁ SUSPENDIDO!")" \
+            --text "$(echo -e "O USUARIO JA ESTA SUSPENSO !")" \
             --parse_mode html
         return 0
     }
-    
-    # Verifica si el usuario existe en el directorio de activos
     [[ ! -d "/etc/bot/revenda/$_revs" ]] && {
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e "¡EL USUARIO NO EXISTE!")" \
+            --text "$(echo -e "O USUARIO NAO EXISTE !")" \
             --parse_mode html
         return 0
     }
-    
-    # --- LÓGICA DEL ADMINISTRADOR ---
     [[ "${message_from_id[$id]}" == "$id_admin" ]] && {
-        
-        # 1. Suspende a los SUB-REVENDEDORES si los tiene
         [[ "$(grep -wc 'SUBREVENDA' /etc/bot/revenda/$_revs/$_revs)" != '0' ]] && {
             while read _listsub3; do
                 _usub3="$(echo $_listsub3 | awk '{print $2}')"
                 _dir_users="/etc/bot/revenda/$_usub3/usuarios"
-                
-                # Suspende los usuarios SSH del sub-revendedor
                 [[ "$(ls $_dir_users | wc -l)" != '0' ]] && {
                     for _user in $(ls $_dir_users); do
-                        usermod -L $_user # Bloquea el login
-                        pkill -f $_user # Mata las sesiones activas
+                        usermod -L $_user
+                        pkill -f $_user
                     done
                 }
-                mv /etc/bot/revenda/$_usub3 /etc/bot/suspensos/$_usub3 # Mueve la carpeta a suspendidos
-                grep -w "$_usub3" $ativos >>$suspensos # Agrega la entrada de suspensión
+                mv /etc/bot/revenda/$_usub3 /etc/bot/suspensos/$_usub3
+                grep -w "$_usub3" $ativos >>$suspensos
             done <<<"$(grep -w 'SUBREVENDA' /etc/bot/revenda/$_revs/$_revs)"
         }
-        
-        # 2. Suspende el REVENDEDOR PRINCIPAL
-        # Suspende los usuarios SSH del revendedor
         [[ "$(ls /etc/bot/revenda/$_revs/usuarios | wc -l)" != '0' ]] && {
             for _user_ in $(ls /etc/bot/revenda/$_revs/usuarios); do
                 usermod -L $_user_
                 pkill -f $_user_
             done
         }
-        mv /etc/bot/revenda/$_revs /etc/bot/suspensos/$_revs # Mueve la carpeta a suspendidos
-        grep -w "$_revs" $ativos >>$suspensos # Agrega la entrada de suspensión
-        
+        mv /etc/bot/revenda/$_revs /etc/bot/suspensos/$_revs
+        grep -w "$_revs" $ativos >>$suspensos
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e "SUSPENDIDO CON ÉXITO")" \
+            --text "$(echo -e "SUSPENDIDO COM SUCESSO")" \
             --parse_mode html
         return 0
-        
-    # --- LÓGICA DEL REVENDEDOR (Suspendiendo solo Sub-revendedores) ---
     } || {
-        # Verifica si el usuario a suspender es un sub-revendedor registrado bajo el revendedor actual
         [[ "$(grep -wc "$_revs" /etc/bot/revenda/${message_from_username}/${message_from_username})" != '0' ]] && {
-            
-            # Suspende los usuarios SSH del sub-revendedor
             [[ "$(ls /etc/bot/revenda/$_revs/usuarios | wc -l)" != '0' ]] && {
                 for _user_ in $(ls /etc/bot/revenda/$_revs/usuarios); do
                     usermod -L $_user_
                     pkill -f $_user_
                 done
             }
-            mv /etc/bot/revenda/$_revs /etc/bot/suspensos/$_revs # Mueve la carpeta a suspendidos
-            grep -w "$_revs" $ativos >>$suspensos # Agrega la entrada de suspensión
-            
+            mv /etc/bot/revenda/$_revs /etc/bot/suspensos/$_revs
+            grep -w "$_revs" $ativos >>$suspensos
             ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-                --text "$(echo -e "SUSPENDIDO CON ÉXITO")" \
+                --text "$(echo -e "SUSPENDIDO COM SUCESSO")" \
                 --parse_mode html
             return 0
         } || {
             ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-                --text "$(echo -e "EL SUB-REVENDEDOR NO EXISTE")" \
+                --text "$(echo -e "O SUB REVENDEDOR NAO EXISTE")" \
                 --parse_mode html
             return 0
         }
@@ -2532,39 +2077,33 @@ susp_rev() {
 }
 
 infouserbot() {
-    # Si el usuario tiene acceso de REVENDEDOR/SUB-REVENDEDOR (está en la lista de activos)
     [[ $(grep -wc ${message_from_username} $ativos) != '0' ]] && {
-        _cont_limite=$(grep -w ${message_from_username} $ativos | awk '{print $4}') # Límite total
-        fun_verif_limite_rev ${message_from_username} # Ejecuta la función para calcular el límite usado (_result)
-        _cont_disp=$(echo $_cont_limite - $_result | bc) # Límite disponible
-        
+        _cont_limite=$(grep -w ${message_from_username} $ativos | awk '{print $4}')
+        fun_verif_limite_rev ${message_from_username}
+        _cont_disp=$(echo $_cont_limite - $_result | bc)
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e "<b>NOMBRE: </b> ${message_from_first_name[$(ShellBot.ListUpdates)]}\n<b>USUARIO: </b> "@${message_from_username[$(ShellBot.ListUpdates)]:-null}")\n<b>ID: </b> ${message_from_id[$(ShellBot.ListUpdates)]}\nACCESO: REVENTA\n<b>LÍMITE TOTAL:</b> $_cont_limite\n<b>LÍMITE RESTANTE:</b> $_cont_disp" \
+            --text "$(echo -e "<b>NOME: </> ${message_from_first_name[$(ShellBot.ListUpdates)]}\n<b>USER:</>" "@${message_from_username[$(ShellBot.ListUpdates)]:-null}")\n<b>ID:</> ${message_from_id[$(ShellBot.ListUpdates)]}\nACESSO: REVENDA\n<b>LIMITE TOTAL:</b> $_cont_limite\n<b>LIMITE RESTANTE:</b> $_cont_disp" \
             --parse_mode html
         return 0
     } || {
-        # Si el usuario NO tiene acceso de REVENDEDOR
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e "<b>NOMBRE: </b> ${message_from_first_name[$(ShellBot.ListUpdates)]}\n<b>USUARIO: </b> "@${message_from_username[$(ShellBot.ListUpdates)]:-null}")\n<b>ID: </b> ${message_from_id[$(ShellBot.ListUpdates)]} " \
+            --text "$(echo -e "<b>NOME: </> ${message_from_first_name[$(ShellBot.ListUpdates)]}\n<b>USER:</>" "@${message_from_username[$(ShellBot.ListUpdates)]:-null}")\n<b>ID:</> ${message_from_id[$(ShellBot.ListUpdates)]} " \
             --parse_mode html
         return 0
     }
 }
 
-
 fun_menurevenda() {
-    # Verifica suspensión
     [[ "$(grep -wc ${callback_query_from_username} $suspensos)" != '0' ]] && {
         ShellBot.answerCallbackQuery --callback_query_id ${callback_query_id[$id]} \
-            --text "⚠️ ¡ESTÁS SUSPENDIDO! CONTACTA AL ADMINISTRADOR"
+            --text "⚠️ VC ESTA SUSPENSO! CONTATE O ADMINISTRADOR"
         return 0
     }
-    # Si es el administrador o un revendedor activo
     [[ "${callback_query_from_id[$id]}" == "$id_admin" ]] || [[ "$(grep -wc ${callback_query_from_username} $ativos)" != '0' ]] && {
         ShellBot.editMessageText --chat_id ${callback_query_message_chat_id[$id]} \
             --message_id ${callback_query_message_message_id[$id]} \
-            --text "SELECCIONA UNA OPCIÓN ABAJO:" \
-            --reply_markup "$(ShellBot.InlineKeyboardMarkup --button 'menu4')" # Muestra el menú 'menu4' (Opciones de Reventa)
+            --text "SELECIONE UMA OPÇÃO ABAIXO:" \
+            --reply_markup "$(ShellBot.InlineKeyboardMarkup --button 'menu4')"
         return 0
     }
 }
@@ -2585,14 +2124,14 @@ ShellBot.InlineKeyboardButton --button 'menu1' --line 10 --text 'INFO USUARIOS' 
 ShellBot.InlineKeyboardButton --button 'menu1' --line 11 --text 'REMOVER EXPIRADOS' --callback_data '_expirados'
 ShellBot.InlineKeyboardButton --button 'menu1' --line 12 --text 'ALTERAR CONTRASEÑA ROOT' --callback_data '_senharoot'
 ShellBot.InlineKeyboardButton --button 'menu1' --line 1 --text 'INFO VPS' --callback_data '_infovps'
-ShellBot.InlineKeyboardButton --button 'menu1' --line 2 --text 'OPTIMIZAR' --callback_data '_otimizar'
-ShellBot.InlineKeyboardButton --button 'menu1' --line 3 --text 'ARCHIVOS' --callback_data '_arqdown'
-ShellBot.InlineKeyboardButton --button 'menu1' --line 4 --text 'REVENTA' --callback_data '_opcoesrev'
+ShellBot.InlineKeyboardButton --button 'menu1' --line 2 --text 'OTIMIZAR' --callback_data '_otimizar'
+ShellBot.InlineKeyboardButton --button 'menu1' --line 3 --text 'ARQUIVOS' --callback_data '_arqdown'
+ShellBot.InlineKeyboardButton --button 'menu1' --line 4 --text 'REVENDA' --callback_data '_opcoesrev'
 ShellBot.InlineKeyboardButton --button 'menu1' --line 5 --text 'SPEEDTESTE' --callback_data '_speedteste'
 ShellBot.InlineKeyboardButton --button 'menu1' --line 6 --text 'BACKUP USUARIOS' --callback_data '_backupusers'
 ShellBot.InlineKeyboardButton --button 'menu1' --line 7 --text "AUTO BACKUP" --callback_data '_autobkp'
-ShellBot.InlineKeyboardButton --button 'menu1' --line 8 --text 'RECORDATORIO' --callback_data '_relatorio'
-ShellBot.InlineKeyboardButton --button 'menu1' --line 9 --text 'AYUDA' --callback_data '_ajuda'
+ShellBot.InlineKeyboardButton --button 'menu1' --line 8 --text 'RELATORIO' --callback_data '_relatorio'
+ShellBot.InlineKeyboardButton --button 'menu1' --line 9 --text 'AJUDA' --callback_data '_ajuda'
 ShellBot.regHandleFunction --function fun_adduser --callback_data _criaruser
 ShellBot.regHandleFunction --function fun_add_teste --callback_data _criarteste
 ShellBot.regHandleFunction --function fun_deluser --callback_data _deluser
@@ -2617,7 +2156,6 @@ ShellBot.regHandleFunction --function fun_menurevenda --callback_data _opcoesrev
 unset keyboard1
 keyboard1="$(ShellBot.InlineKeyboardMarkup -b 'menu1')"
 
-
 # LISTA MENU REVENDEDOR
 unset menu2
 menu2=''
@@ -2632,9 +2170,9 @@ ShellBot.InlineKeyboardButton --button 'menu2' --line 3 --text 'INFO USUARIOS' -
 ShellBot.InlineKeyboardButton --button 'menu2' --line 4 --text 'ALTERAR CONTRASEÑA' --callback_data '_altsenha2'
 ShellBot.InlineKeyboardButton --button 'menu2' --line 4 --text 'REMOVER EXPIRADOS' --callback_data '_expirados2'
 ShellBot.InlineKeyboardButton --button 'menu2' --line 5 --text 'ALTERAR FECHA' --callback_data '_altdata2'
-ShellBot.InlineKeyboardButton --button 'menu2' --line 5 --text 'REVENTA' --callback_data '_opcoesrev2'
-ShellBot.InlineKeyboardButton --button 'menu2' --line 6 --text 'RECORDATORIO' --callback_data '_relatorio2'
-ShellBot.InlineKeyboardButton --button 'menu2' --line 6 --text 'AYUDA' --callback_data '_ajuda2'
+ShellBot.InlineKeyboardButton --button 'menu2' --line 5 --text 'REVENDA' --callback_data '_opcoesrev2'
+ShellBot.InlineKeyboardButton --button 'menu2' --line 6 --text 'RELATORIO' --callback_data '_relatorio2'
+ShellBot.InlineKeyboardButton --button 'menu2' --line 6 --text 'AJUDA' --callback_data '_ajuda2'
 ShellBot.regHandleFunction --function fun_adduser --callback_data _criaruser2
 ShellBot.regHandleFunction --function fun_add_teste --callback_data _criarteste2
 ShellBot.regHandleFunction --function fun_deluser --callback_data _deluser2
